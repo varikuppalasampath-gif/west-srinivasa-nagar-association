@@ -1,0 +1,7 @@
+node_modules/
+.firebase/
+firebase-debug.log
+.clasp.json
+.env
+.DS_Store
+Thumbs.db
