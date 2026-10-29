@@ -144,15 +144,27 @@ function doGet(e) {
   } catch (err) { console.error(err); return out(false, 'Unable to process the request'); }
 }
 
+const SUPER_ADMINS = ['varikuppalaa.sampath@gmail.com'];
+
 function who(token) {
   if (!token) bad('Forbidden');
   const r = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(token), {muteHttpExceptions: true});
   if (r.getResponseCode() !== 200) bad('Forbidden');
   const t = JSON.parse(r.getContentText());
   if (t.aud !== CLIENT_ID || String(t.email_verified) !== 'true' || +t.exp < Date.now() / 1000) bad('Forbidden');
-  const m = readAll('Admins').find(a => a.email.toLowerCase().trim() === String(t.email).toLowerCase());
-  if (!m || !['admin','editor'].includes(m.role.toLowerCase().trim())) bad('Forbidden');
-  return {email: t.email, role: m.role.toLowerCase().trim()};
+  
+  const userEmail = String(t.email).toLowerCase().trim();
+  
+  // Direct check for designated super admin
+  if (SUPER_ADMINS.map(e => e.toLowerCase()).includes(userEmail)) {
+    return {email: t.email, role: 'admin'};
+  }
+  
+  // Otherwise check Admins sheet tab
+  const admins = readAll('Admins');
+  const m = admins.find(a => String(a.email || '').toLowerCase().trim() === userEmail);
+  if (!m || !['admin','editor'].includes(String(m.role || '').toLowerCase().trim())) bad('Forbidden');
+  return {email: t.email, role: String(m.role).toLowerCase().trim()};
 }
 
 function folder(sub) {

@@ -1209,10 +1209,14 @@ function bindAdmin() {
           ADM.role = d.role;
           panel();
         } catch (e) {
+          console.error("Sign-in verification error:", e);
           ADM.tok = "";
-          $("#aerr").textContent = e.message === "Forbidden"
-            ? "This Google account is not on the authorized committee list."
-            : "Sign-in authentication failed. Please try again.";
+          const msg = e && e.message ? e.message : "";
+          if (msg === "Forbidden") {
+            $("#aerr").textContent = "This Google account is not on the authorized committee list (Admins sheet).";
+          } else {
+            $("#aerr").textContent = "Sign-in failed: " + (msg || "Network / Web App configuration error") + ". Check console for details.";
+          }
         }
       }
     });
