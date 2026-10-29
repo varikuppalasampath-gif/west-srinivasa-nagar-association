@@ -4,34 +4,132 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>West Srinvasa Nagar Association</title>
+    <title>West Srinivasa Nagar Association – Official Resident Portal</title>
     <meta name="description"
-        content="Official website of the West Srinivasa Nagar Association: notices, events, gallery, committee and house directory.">
+        content="Official portal of the West Srinivasa Nagar Association (Ismailkhanguda, Hyderabad): community notices, events, house map directory, photo gallery and bylaws.">
+    <meta name="theme-color" content="#0f3d68">
+
+    <!-- SVG Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230f3d68'/><path d='M25 55 L50 32 L75 55 V78 H25 Z' fill='%230d9488'/><path d='M42 78 V60 H58 V78 Z' fill='%23ffffff'/><circle cx='50' cy='24' r='7' fill='%23f59e0b'/></svg>">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="css/style.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main">Skip to main content</a>
+
     <header>
         <div class="bar">
-            <a class="brand" href="#home"><span class="logo" aria-hidden="true">WS</span><span>West Srinivasa
-                    Nagar<br><small style="font-weight:400;color:var(--muted)">Association</small></span></a>
-            <nav id="nav" aria-label="Main">
+            <a class="brand" href="#home" aria-label="West Srinivasa Nagar Association Home">
+                <div class="brand-icon" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">West Srinivasa Nagar</span>
+                    <span class="brand-sub">Residents' Association</span>
+                </div>
+            </a>
+
+            <nav id="nav" aria-label="Main Navigation">
                 <ul id="navlist"></ul>
             </nav>
-            <button class="theme" id="theme" aria-label="Toggle dark mode">◐</button>
-            <button class="menu" id="menu" aria-expanded="false" aria-controls="nav">Menu</button>
+
+            <div class="header-actions">
+                <button class="theme" id="theme" aria-label="Toggle dark/light theme" title="Toggle theme">
+                    <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+
+                <button class="menu" id="menu" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
     </header>
+
     <main id="main" tabindex="-1"></main>
+
     <footer>
-        <div>
-            <p><b>West Srinivasa Nagar Association</b> · <span id="fcontact"></span></p>
-            <p>© <span id="yr"></span> West Srinivasa Nagar Association. Content is published by the association
-                committee. · <a href="#admin">Admin</a></p>
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>West Srinivasa Nagar Association</h4>
+                    <p id="faddress">Ismailkhanguda, Hyderabad, Telangana</p>
+                    <p>Official digital portal providing timely notices, community welfare initiatives, event schedules,
+                        and colony directory.</p>
+                    <p><b>Contact:</b> <span id="fcontact"></span></p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#announcements">Notices & Circulars</a></li>
+                        <li><a href="#events">Upcoming Events</a></li>
+                        <li><a href="#map">Colony Map & Directory</a></li>
+                        <li><a href="#gallery">Photo Gallery</a></li>
+                        <li><a href="#bylaws">Bylaws & Governance</a></li>
+                        <li><a href="#contact">Contact & Grievance</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Emergency & Civic Links</h4>
+                    <ul class="footer-links">
+                        <li><span>GHMC Helpline: <b>040-21111111</b></span></li>
+                        <li><span>Police Control Room: <b>100 / 112</b></span></li>
+                        <li><span>Ambulance / Medical: <b>108</b></span></li>
+                        <li><span>Electricity Complaints: <b>1912</b></span></li>
+                        <li><span>Water Board (HMWSSB): <b>155313</b></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>© <span id="yr"></span> West Srinivasa Nagar Association. All rights reserved.</div>
+                <div>
+                    <span>Published by Association Executive Committee</span> ·
+                    <a href="#admin" style="font-weight:600;">Committee Portal (Sign In)</a>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Scroll to top" title="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 15-6-6-6 6" />
+        </svg>
+    </button>
 
     <script src="js/config.js"></script>
     <script src="js/app.js"></script>
