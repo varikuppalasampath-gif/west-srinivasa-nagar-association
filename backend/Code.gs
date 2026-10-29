@@ -26,22 +26,28 @@ function importBathukammaImages() {
   const CATEGORY  = 'Festivals';
   const ALT_TEXT  = 'Bathukamma festival celebration';
 
+  Logger.log('Starting Bathukamma import...');
+
   let folder;
   try {
     folder = DriveApp.getFolderById(FOLDER_ID);
+    Logger.log('Found folder: ' + folder.getName());
   } catch (e) {
-    Logger.log('Error opening folder ID: ' + e);
-    return;
+    Logger.log('ERROR opening folder: ' + e.message);
+    throw new Error('Could not open folder with ID ' + FOLDER_ID + '. Details: ' + e.message);
   }
 
   const sh = book().getSheetByName(T.gallery);
   if (!sh) {
-    Logger.log('Gallery sheet not found.');
-    return;
+    Logger.log('ERROR: Sheet "' + T.gallery + '" not found in spreadsheet.');
+    throw new Error('Gallery sheet not found');
   }
+  Logger.log('Found sheet: ' + sh.getName());
 
   const h = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
   const urlIdx = h.indexOf('image_url');
+  Logger.log('Header columns: ' + JSON.stringify(h));
+
   const existingUrls = sh.getLastRow() > 1
     ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length)
         .getValues()
@@ -50,24 +56,32 @@ function importBathukammaImages() {
     : [];
 
   const files = folder.getFiles();
-  const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   let count = 0;
+  let fileCount = 0;
   const newRows = [];
 
   while (files.hasNext()) {
     const file = files.next();
+    fileCount++;
     const mime = file.getMimeType();
-    if (!IMAGE_TYPES.includes(mime)) continue;
+    Logger.log('File #' + fileCount + ': "' + file.getName() + '" (type: ' + mime + ')');
 
-    // Grant public view permission so images render on the website
+    if (!mime.startsWith('image/')) {
+      Logger.log('  -> Skipping non-image');
+      continue;
+    }
+
     try {
       file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     } catch (err) {
-      Logger.log('Permission note: ' + err);
+      Logger.log('  -> Note setting permission: ' + err.message);
     }
 
     const thumbUrl = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1400';
-    if (existingUrls.includes(thumbUrl)) continue;
+    if (existingUrls.includes(thumbUrl)) {
+      Logger.log('  -> Already imported, skipping');
+      continue;
+    }
 
     const rawName = file.getName().replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ').trim();
     const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : 'Bathukamma Celebration';
@@ -85,16 +99,17 @@ function importBathukammaImages() {
     count++;
   }
 
+  Logger.log('Total files scanned: ' + fileCount + ', new images to insert: ' + newRows.length);
+
   if (newRows.length > 0) {
     sh.getRange(sh.getLastRow() + 1, 1, newRows.length, h.length)
       .setNumberFormat('@')
       .setValues(newRows);
+    Logger.log('SUCCESS: Inserted ' + newRows.length + ' rows into Gallery sheet!');
   }
 
-  // Clear cache for instant website refresh
   CacheService.getScriptCache().removeAll(Object.keys(T).map(x => 'pub3_' + x));
-
-  Logger.log('DONE: ' + count + ' images added to Gallery sheet.');
+  Logger.log('Cache cleared successfully.');
 }
 
 function readAll(name) {
