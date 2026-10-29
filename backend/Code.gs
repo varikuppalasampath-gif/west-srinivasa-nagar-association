@@ -1,4 +1,85 @@
 /** West Srinivasa Nagar Association - backend (public data, contact form, secure admin + uploads) */
+
+/**
+ * ONE-TIME IMPORT: Reads all images from the "Bathukamma" folder in Google Drive
+ * and inserts them into the Gallery sheet as published entries.
+ *
+ * HOW TO RUN:
+ *   1. Open this script in the Apps Script editor (script.google.com)
+ *   2. Select "importBathukammaImages" from the function dropdown
+ *   3. Click ▶ Run
+ *   4. Done! Images will appear in the Gallery sheet and on the website within 5 minutes.
+ *
+ * You can run it again safely — it skips files that are already in the Gallery sheet.
+ */
+function importBathukammaImages() {
+  const FOLDER_NAME   = 'Bathukamma';   // Google Drive folder name
+  const CATEGORY      = 'Festivals';    // Gallery category shown on the website
+  const ALT_TEXT      = 'Bathukamma festival celebration';
+
+  // --- find the Bathukamma folder ---
+  const folderIter = DriveApp.getFoldersByName(FOLDER_NAME);
+  if (!folderIter.hasNext()) {
+    SpreadsheetApp.getUi().alert('Folder "' + FOLDER_NAME + '" not found in My Drive.');
+    return;
+  }
+  const bathukammaFolder = folderIter.next();
+
+  // --- load Gallery sheet & existing image URLs to avoid duplicates ---
+  const sh   = book().getSheetByName(T.gallery);
+  const h    = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+  const existingUrls = sh.getLastRow() > 1
+    ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length)
+        .getValues()
+        .map(r => r[h.indexOf('image_url')])
+        .filter(Boolean)
+    : [];
+
+  // --- iterate image files in the folder ---
+  const files = bathukammaFolder.getFiles();
+  const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  let added = 0;
+
+  while (files.hasNext()) {
+    const file = files.next();
+    if (!IMAGE_TYPES.includes(file.getMimeType())) continue;  // skip non-images
+
+    // Make the file publicly viewable (view-only, same as upload() does)
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+    const thumbUrl = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1400';
+    if (existingUrls.includes(thumbUrl)) continue;  // already imported
+
+    // Build a clean title from the filename (strip extension, replace _ and -)
+    const rawName  = file.getName().replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ');
+    const title    = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
+    const row = {};
+    row['id']        = Utilities.getUuid().slice(0, 8);
+    row['title']     = title || 'Bathukamma';
+    row['category']  = CATEGORY;
+    row['alt']       = ALT_TEXT;
+    row['image_url'] = thumbUrl;
+    row['status']    = 'published';
+
+    sh.getRange(sh.getLastRow() + 1, 1, 1, h.length)
+      .setNumberFormat('@')
+      .setValues([h.map(c => row[c] != null ? row[c] : '')]);
+
+    existingUrls.push(thumbUrl);  // prevent duplicate within same run
+    added++;
+  }
+
+  // Clear cache so the website picks up new images within 5 minutes
+  CacheService.getScriptCache().removeAll(Object.keys(T).map(x => 'pub3_' + x));
+
+  const msg = added > 0
+    ? '✅ Successfully imported ' + added + ' Bathukamma image(s) into the Gallery sheet!\n\nThey will appear on the website within 5 minutes (cache refresh).'
+    : 'ℹ️ No new images found. Either the folder is empty or all images are already in the Gallery sheet.';
+
+  SpreadsheetApp.getUi().alert(msg);
+  Logger.log(msg);
+}
 const SHEET_ID = '';                              // leave empty if opened from inside the sheet
 const CLIENT_ID = '95744026917-fo3f8omsura363l9rv36od5kpl3h6odq.apps.googleusercontent.com';  // same value as GOOGLE_CLIENT_ID in index.html
 const UPLOAD_FOLDER = 'WSN Uploads';
