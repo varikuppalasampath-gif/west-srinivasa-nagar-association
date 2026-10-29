@@ -18,40 +18,40 @@ const bad = m => { throw new Error('!' + m); };
 const safe = s => { s = String(s == null ? '' : s).trim(); return /^[=+\-@]/.test(s) ? "'" + s : s; };
 
 /**
- * Reads all images from the "Bathukamma" folder in Google Drive
- * and inserts them into the Gallery sheet as published entries.
- * Can be run from script editor OR via URL: ?action=syncBathukamma
+ * EXACT FOLDER IMPORT: Uses your Bathukamma folder ID directly
+ * Folder URL: https://drive.google.com/drive/folders/1tpKpofdT3suiPOMNr_n-Rrs0xzrJLJba
  */
 function importBathukammaImages() {
-  const FOLDER_NAME = 'Bathukamma';
-  const CATEGORY = 'Festivals';
-  const ALT_TEXT = 'Bathukamma celebration';
+  const FOLDER_ID = '1tpKpofdT3suiPOMNr_n-Rrs0xzrJLJba';
+  const CATEGORY  = 'Festivals';
+  const ALT_TEXT  = 'Bathukamma festival celebration';
 
-  const folderIter = DriveApp.getFoldersByName(FOLDER_NAME);
-  if (!folderIter.hasNext()) {
-    Logger.log('Folder "' + FOLDER_NAME + '" not found in Google Drive.');
-    return { success: false, message: 'Folder "' + FOLDER_NAME + '" not found in Google Drive' };
+  let folder;
+  try {
+    folder = DriveApp.getFolderById(FOLDER_ID);
+  } catch (e) {
+    Logger.log('Error opening folder ID: ' + e);
+    return;
   }
-  const folder = folderIter.next();
 
   const sh = book().getSheetByName(T.gallery);
   if (!sh) {
     Logger.log('Gallery sheet not found.');
-    return { success: false, message: 'Gallery sheet not found' };
+    return;
   }
 
   const h = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
-  const urlColIdx = h.indexOf('image_url');
+  const urlIdx = h.indexOf('image_url');
   const existingUrls = sh.getLastRow() > 1
     ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length)
         .getValues()
-        .map(r => String(r[urlColIdx]))
+        .map(r => String(r[urlIdx]))
         .filter(Boolean)
     : [];
 
   const files = folder.getFiles();
   const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-  let added = 0;
+  let count = 0;
   const newRows = [];
 
   while (files.hasNext()) {
@@ -59,30 +59,30 @@ function importBathukammaImages() {
     const mime = file.getMimeType();
     if (!IMAGE_TYPES.includes(mime)) continue;
 
-    // Grant link view permission
+    // Grant public view permission so images render on the website
     try {
       file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    } catch (e) {
-      Logger.log('Warning setting permission: ' + e);
+    } catch (err) {
+      Logger.log('Permission note: ' + err);
     }
 
     const thumbUrl = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1400';
     if (existingUrls.includes(thumbUrl)) continue;
 
-    const rawName = file.getName().replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ');
-    const title = rawName.trim() ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : 'Bathukamma Festival';
+    const rawName = file.getName().replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ').trim();
+    const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : 'Bathukamma Celebration';
 
     const row = {};
-    row['id'] = Utilities.getUuid().slice(0, 8);
-    row['title'] = title;
-    row['category'] = CATEGORY;
-    row['alt'] = ALT_TEXT;
+    row['id']        = Utilities.getUuid().slice(0, 8);
+    row['title']     = title;
+    row['category']  = CATEGORY;
+    row['alt']       = ALT_TEXT;
     row['image_url'] = thumbUrl;
-    row['status'] = 'published';
+    row['status']    = 'published';
 
     newRows.push(h.map(c => row[c] != null ? row[c] : ''));
     existingUrls.push(thumbUrl);
-    added++;
+    count++;
   }
 
   if (newRows.length > 0) {
@@ -91,14 +91,10 @@ function importBathukammaImages() {
       .setValues(newRows);
   }
 
-  // Clear cache for instant frontend update
+  // Clear cache for instant website refresh
   CacheService.getScriptCache().removeAll(Object.keys(T).map(x => 'pub3_' + x));
 
-  const resultMsg = added > 0
-    ? 'Successfully imported ' + added + ' Bathukamma image(s).'
-    : 'No new images found (all already imported or folder is empty).';
-  Logger.log(resultMsg);
-  return { success: true, added: added, message: resultMsg };
+  Logger.log('DONE: ' + count + ' images added to Gallery sheet.');
 }
 
 function readAll(name) {
@@ -127,14 +123,10 @@ function readPublic(key) {
 function doGet(e) {
   try {
     const a = (e && e.parameter && e.parameter.action) || 'all';
-    if (a === 'syncBathukamma') {
-      const res = importBathukammaImages();
-      return out(res.success, res.message, res);
-    }
     if (a === 'all') { const d = {}; Object.keys(T).forEach(k => d[k] = readPublic(k)); return out(true, 'OK', d); }
     if (T[a]) return out(true, 'OK', readPublic(a));
     return out(false, 'Unknown action');
-  } catch (err) { console.error(err); return out(false, 'Unable to process the request: ' + err.message); }
+  } catch (err) { console.error(err); return out(false, 'Unable to process the request'); }
 }
 
 function who(token) {
