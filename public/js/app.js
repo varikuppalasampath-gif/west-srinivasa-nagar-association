@@ -609,12 +609,85 @@ ${sampleBanner()}
     const activeCount = DATA.houses.filter(h => h.status !== "inactive").length;
     return `
 <div class="page-header">
-  <h1>Colony House Map & Directory</h1>
-  <p>Schematic layout and registered house directory for West Srinivasa Nagar (${activeCount} registered houses).</p>
+  <h1>Colony Map &amp; House Directory</h1>
+  <p>Interactive GPS boundary map, satellite imagery, and verified plot directory for West Srinivasa Nagar (${activeCount} registered houses).</p>
 </div>
 
 <div class="note">
-  <b>Privacy & Security Note:</b> This schematic map displays house identification approved by the association. Personal contact numbers and private resident details are never disclosed publicly.
+  <b>Privacy &amp; Security Note:</b> This portal displays official boundaries and house identifiers approved by the association. Personal phone numbers and private resident details are never disclosed publicly.
+</div>
+
+<!-- ===== INTERACTIVE GPS BOUNDARY MAP ===== -->
+<div class="card" style="margin-bottom:28px;padding:0;overflow:hidden;border-radius:14px;box-shadow:0 4px 20px rgba(15,61,104,0.12)">
+  <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,#071b30 0%,#0f3d68 50%,#0d9488 100%);color:#fff">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <div>
+        <div style="font-weight:800;font-size:15px;letter-spacing:-0.2px">West Srinivasa Nagar — Official Boundary Map</div>
+        <div style="font-size:12px;opacity:0.85">Ismailkhanguda, Hyderabad · 4 GPS Survey Points</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="btn-fit-map" class="btn btn-sm" style="background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px">
+        🔍 Fit Boundary
+      </button>
+      <button id="btn-view-aerial" class="btn btn-sm" style="background:#ffffff;color:#0f3d68;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:12px">
+        📷 Aerial Photo
+      </button>
+    </div>
+  </div>
+
+  <div id="leaflet-map" style="height:440px;width:100%;position:relative;z-index:1"></div>
+
+  <!-- GPS Survey Boundary Coordinates Panel -->
+  <div style="background:var(--bg-subtle);padding:14px 20px;border-top:1px solid var(--border)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="font-weight:700;font-size:13px;color:var(--text)">📐 Registered Colony GPS Survey Coordinates:</span>
+      <span style="font-size:11.5px;color:var(--text-muted)">WGS84 Datum</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;font-size:12px">
+      <div style="background:var(--card);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
+        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-right:6px">1</span>
+        <b>Corner 1 (SW):</b><br>
+        <span style="font-family:monospace;color:var(--text-muted)">17°27'32.22"N 78°38'28.23"E</span>
+      </div>
+      <div style="background:var(--card);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
+        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-right:6px">2</span>
+        <b>Corner 2 (NW):</b><br>
+        <span style="font-family:monospace;color:var(--text-muted)">17°27'39.43"N 78°38'32.03"E</span>
+      </div>
+      <div style="background:var(--card);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
+        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-right:6px">3</span>
+        <b>Corner 3 (NE):</b><br>
+        <span style="font-family:monospace;color:var(--text-muted)">17°27'35.78"N 78°38'40.19"E</span>
+      </div>
+      <div style="background:var(--card);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
+        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-right:6px">4</span>
+        <b>Corner 4 (SE):</b><br>
+        <span style="font-family:monospace;color:var(--text-muted)">17°27'28.14"N 78°38'35.82"E</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Aerial Survey Photo -->
+<div id="aerial-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div style="position:relative;max-width:700px;width:100%;background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.5)">
+    <div style="padding:12px 18px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#0f3d68,#0d9488);color:#fff">
+      <span style="font-weight:700;font-size:14px">📷 West Srinivasa Nagar — Official Aerial Survey Map</span>
+      <button id="close-aerial-modal" style="background:transparent;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div style="padding:16px;text-align:center">
+      <img src="images/colony-aerial-boundary.jpg" alt="West Srinivasa Nagar Aerial Survey Map" style="max-width:100%;max-height:75vh;border-radius:8px;object-fit:contain">
+      <p style="margin:10px 0 0;font-size:12px;color:var(--text-muted)">High-resolution aerial satellite capture matching the 4 registered boundary coordinates.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOUSE DIRECTORY SEARCH & SCHEMATIC ===== -->
+<div style="margin-top:32px;margin-bottom:16px">
+  <h2 style="font-size:1.35rem;margin:0 0 6px">Colony Plots &amp; House Directory</h2>
+  <p style="color:var(--text-muted);font-size:14px;margin:0">Search and inspect verified residential plots across Block A and Block B.</p>
 </div>
 
 <form id="hs" class="search-bar" role="search">
@@ -897,7 +970,163 @@ function showHouse(i) {
     </div>`;
 }
 
+function initLeafletColonyMap() {
+  const mapEl = document.getElementById("leaflet-map");
+  if (!mapEl || typeof L === "undefined") return;
+
+  // Clean up previous instance if navigating between views
+  if (window._colonyMap) {
+    try {
+      window._colonyMap.remove();
+    } catch (e) {
+      console.warn("Leaflet map cleanup:", e);
+    }
+    window._colonyMap = null;
+  }
+
+  // 4 Verified GPS Boundary Coordinates for West Srinivasa Nagar:
+  // 1: 17°27'32.22"N 78°38'28.23"E -> 17.458950, 78.641175
+  // 2: 17°27'39.43"N 78°38'32.03"E -> 17.460953, 78.642231
+  // 3: 17°27'35.78"N 78°38'40.19"E -> 17.459939, 78.644497
+  // 4: 17°27'28.14"N 78°38'35.82"E -> 17.457817, 78.643283
+  const BOUNDARY_POINTS = [
+    { name: "Corner 1 (SW)", lat: 17.458950, lng: 78.641175, dms: "17°27'32.22\"N 78°38'28.23\"E" },
+    { name: "Corner 2 (NW)", lat: 17.460953, lng: 78.642231, dms: "17°27'39.43\"N 78°38'32.03\"E" },
+    { name: "Corner 3 (NE)", lat: 17.459939, lng: 78.644497, dms: "17°27'35.78\"N 78°38'40.19\"E" },
+    { name: "Corner 4 (SE)", lat: 17.457817, lng: 78.643283, dms: "17°27'28.14\"N 78°38'35.82\"E" }
+  ];
+
+  const polygonLatLngs = BOUNDARY_POINTS.map(p => [p.lat, p.lng]);
+  const centerLat = 17.459415;
+  const centerLng = 78.642797;
+
+  // Initialize Map
+  const map = L.map("leaflet-map", {
+    center: [centerLat, centerLng],
+    zoom: 17,
+    maxZoom: 19,
+    minZoom: 13,
+    scrollWheelZoom: true
+  });
+  window._colonyMap = map;
+
+  // Base Layers
+  const satelliteLayer = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution: "Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics",
+      maxZoom: 19
+    }
+  );
+
+  const streetLayer = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">OpenStreetMap</a>",
+      maxZoom: 19
+    }
+  );
+
+  // Default to Satellite view
+  satelliteLayer.addTo(map);
+
+  // Layer Switcher
+  L.control.layers(
+    { "🛰️ Satellite View": satelliteLayer, "🗺️ Street Map": streetLayer },
+    null,
+    { position: "topright", collapsed: false }
+  ).addTo(map);
+
+  // Colony Boundary Polygon
+  const boundaryPolygon = L.polygon(polygonLatLngs, {
+    color: "#0d9488",
+    weight: 3.5,
+    opacity: 0.95,
+    fillColor: "#0f3d68",
+    fillOpacity: 0.18,
+    dashArray: "6, 6"
+  }).addTo(map);
+
+  boundaryPolygon.bindPopup(`
+    <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:6px 2px">
+      <div style="font-size:15px;font-weight:800;color:#0f3d68;margin-bottom:4px">West Srinivasa Nagar</div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:8px">Ismailkhanguda, Hyderabad · PIN 500062</div>
+      <div style="background:#f0fdfa;border:1px solid #ccfbf1;padding:8px 10px;border-radius:6px;font-size:12px;color:#0f766e;line-height:1.5">
+        <b>Surveyed Boundary:</b> 4 Verified Coordinates<br>
+        <b>Layout:</b> Block A (1st Cross) &amp; Block B (2nd Cross)
+      </div>
+    </div>
+  `);
+
+  // Corner markers with coordinate tooltips
+  BOUNDARY_POINTS.forEach((pt) => {
+    const marker = L.circleMarker([pt.lat, pt.lng], {
+      radius: 6,
+      fillColor: "#ffffff",
+      color: "#0d9488",
+      weight: 3,
+      opacity: 1,
+      fillOpacity: 1
+    }).addTo(map);
+
+    marker.bindTooltip(`<b>${pt.name}</b><br><span style="font-family:monospace;font-size:11px">${pt.dms}</span>`, {
+      direction: "top",
+      offset: [0, -6]
+    });
+  });
+
+  // Center Marker
+  const centerIcon = L.divIcon({
+    className: "colony-center-pin",
+    html: `<div style="background:#0f3d68;color:#fff;padding:5px 10px;border-radius:14px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,0.35);border:2px solid #fff;display:inline-flex;align-items:center;gap:6px">
+      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981"></span>
+      West Srinivasa Nagar
+    </div>`,
+    iconSize: [165, 28],
+    iconAnchor: [82, 14]
+  });
+  L.marker([centerLat, centerLng], { icon: centerIcon })
+    .addTo(map)
+    .bindPopup("<b>West Srinivasa Nagar Colony Center</b><br>Ismailkhanguda, Hyderabad");
+
+  // Initial bounds fit
+  map.fitBounds(boundaryPolygon.getBounds(), { padding: [35, 35] });
+
+  // Fit button click listener
+  const fitBtn = document.getElementById("btn-fit-map");
+  if (fitBtn) {
+    fitBtn.onclick = () => {
+      map.fitBounds(boundaryPolygon.getBounds(), { padding: [35, 35] });
+    };
+  }
+
+  // Force map container to recalculate layout dimensions inside SPA
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 200);
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 600);
+}
+
 function bindMap() {
+  // Initialize Real Leaflet Interactive GPS Map
+  initLeafletColonyMap();
+
+  // Aerial Survey Photo Modal Handlers
+  const aerialBtn = $("#btn-view-aerial");
+  const aerialModal = $("#aerial-modal");
+  const closeAerial = $("#close-aerial-modal");
+  if (aerialBtn && aerialModal) {
+    aerialBtn.onclick = () => { aerialModal.style.display = "flex"; };
+  }
+  if (closeAerial && aerialModal) {
+    closeAerial.onclick = () => { aerialModal.style.display = "none"; };
+    aerialModal.onclick = (e) => {
+      if (e.target === aerialModal) aerialModal.style.display = "none";
+    };
+  }
+
   const g = document.querySelectorAll(".house");
   g.forEach(e => {
     const i = +e.dataset.i;

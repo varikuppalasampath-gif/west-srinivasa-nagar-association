@@ -242,7 +242,7 @@ a:hover {
 header {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 100;
   background: linear-gradient(135deg, #071b30 0%, #0f3d68 45%, #0d9488 100%);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -1372,7 +1372,17 @@ details p {
   transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
 }
 
-/* Pure CSS Arrow Indicator - Cannot be hidden by fonts, SVGs, or OS defaults */
+#back-to-top svg {
+  width: 22px !important;
+  height: 22px !important;
+  stroke: #ffffff !important;
+  stroke-width: 3px !important;
+  display: block !important;
+  margin: auto !important;
+  transition: transform 0.2s ease !important;
+}
+
+/* Pure CSS Arrow Indicator - fallback */
 .up-arrow-icon {
   display: block !important;
   width: 14px !important;
@@ -1395,6 +1405,10 @@ details p {
   background: linear-gradient(135deg, #091e3a 0%, #0f766e 100%) !important;
   transform: translateY(-3px) scale(1.08) !important;
   box-shadow: 0 8px 24px rgba(13, 148, 136, 0.6) !important;
+}
+
+#back-to-top:hover svg {
+  transform: translateY(-2px) !important;
 }
 
 #back-to-top:hover .up-arrow-icon {
@@ -1615,4 +1629,39 @@ footer {
   letter-spacing: 0.5px;
   z-index: 2;
   backdrop-filter: blur(4px);
+}
+
+/* Leaflet Map Integration */
+#leaflet-map {
+  z-index: 10 !important;
+  background: #1e293b;
+}
+
+.leaflet-pane {
+  z-index: 10 !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 20 !important;
+}
+
+.leaflet-control-layers {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid var(--border) !important;
+  font-family: inherit !important;
+  font-size: 12px !important;
+  padding: 8px 12px !important;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(15, 61, 104, 0.25) !important;
+  font-family: inherit !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.4 !important;
 }

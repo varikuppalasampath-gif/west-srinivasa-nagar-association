@@ -21,6 +21,11 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="css/style.css">
+    <!-- Leaflet.js – real interactive GPS map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPcM=" crossorigin=""></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
@@ -125,7 +130,10 @@
 
     <!-- Back to Top Button -->
     <button id="back-to-top" aria-label="Scroll to top" title="Back to top">
-        <i class="up-arrow-icon" aria-hidden="true"></i>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto" aria-hidden="true">
+            <path d="M18 15l-6-6-6 6" />
+        </svg>
     </button>
 
     <script src="js/config.js"></script>
