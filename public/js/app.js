@@ -34,21 +34,59 @@ let DATA = {
     { id: "C5", name: "P. Rajesh", designation: "Executive Member (Infra)", term: "2025–2027", public_contact: "" },
     { id: "C6", name: "V. Lakshmi", designation: "Executive Member (Security)", term: "2025–2027", public_contact: "" }
   ],
-  houses: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(n => ({
-    house_id: "WSN-" + String(n).padStart(3, "0"),
-    house_number: String(n),
-    owner_display_name: [
+  houses: (function() {
+    // 4 GPS Boundary corners used for bilinear interpolation of all 40 colony plots
+    const c1 = [17.458950, 78.641175]; // Corner 1 (SW)
+    const c2 = [17.460953, 78.642231]; // Corner 2 (NW)
+    const c3 = [17.459939, 78.644497]; // Corner 3 (NE)
+    const c4 = [17.457817, 78.643283]; // Corner 4 (SE)
+    function interpolateGPS(u, v) {
+      const wLat = (1 - u) * c1[0] + u * c2[0];
+      const wLng = (1 - u) * c1[1] + u * c2[1];
+      const eLat = (1 - u) * c4[0] + u * c3[0];
+      const eLng = (1 - u) * c4[1] + u * c3[1];
+      return [
+        +((1 - v) * wLat + v * eLat).toFixed(6),
+        +((1 - v) * wLng + v * eLng).toFixed(6)
+      ];
+    }
+    const residentNames = [
       "R. K. Sharma", "S. Venkat Rao", "K. Rama Rao", "M. Srinivasulu",
       "T. Anjaiah", "A. Prabhakar", "P. Sitaram", "V. Balakrishna",
-      "N. Jagadish", "L. Mallikarjun", "D. Subba Rao", "G. Chandrashekhar"
-    ][n - 1],
-    block: n <= 6 ? "Block A" : "Block B",
-    street_or_lane: n <= 6 ? "1st Cross Road" : "2nd Cross Road",
-    property_type: "Residential",
-    x: 0,
-    y: 0,
-    status: "active"
-  })),
+      "N. Jagadish", "L. Mallikarjun", "D. Subba Rao", "G. Chandrashekhar",
+      "Ch. Nageswara Rao", "B. Satyanarayana", "K. V. Ramana", "Y. Muralidhar",
+      "M. Krishna Murthy", "P. Ramesh Kumar", "V. Suresh Babu", "G. Venkateshwarlu",
+      "K. Sudhakar", "N. Mohan Rao", "T. Ravinder Reddy", "S. Radhakrishna",
+      "P. V. Prasad", "D. Srinivas", "B. Madhusudhan", "M. Janardhan",
+      "K. Harinath", "G. Shankar Rao", "V. Laxminarayana", "Ch. Appa Rao",
+      "T. V. Narayana", "P. Prabhakara Rao", "S. Anand Kumar", "K. Ashok Kumar",
+      "M. Narsimha Rao", "N. Srinivas", "B. Venkatesh", "G. Prabhakar"
+    ];
+    const plots = [];
+    for (let i = 1; i <= 40; i++) {
+      const block = i <= 20 ? "Block A" : "Block B";
+      const laneIdx = i <= 10 ? 1 : (i <= 20 ? 2 : (i <= 30 ? 3 : 4));
+      const lane = laneIdx + (laneIdx === 1 ? "st" : (laneIdx === 2 ? "nd" : (laneIdx === 3 ? "rd" : "th"))) + " Cross Road";
+      const posInLane = (i - 1) % 10;
+      const u = 0.15 + (posInLane / 9) * 0.70;
+      const v = laneIdx === 1 ? 0.22 : (laneIdx === 2 ? 0.38 : (laneIdx === 3 ? 0.62 : 0.78));
+      const [lat, lng] = interpolateGPS(u, v);
+      plots.push({
+        house_id: "WSN-" + String(i).padStart(3, "0"),
+        house_number: String(i),
+        owner_display_name: residentNames[i - 1] || ("Resident " + i),
+        block,
+        street_or_lane: lane,
+        property_type: i % 4 === 0 ? "Independent Villa" : (i % 3 === 0 ? "Duplex House" : "Residential Plot"),
+        x: 0,
+        y: 0,
+        status: "active",
+        lat,
+        lng
+      });
+    }
+    return plots;
+  })(),
   isSample: true
 };
 
@@ -618,18 +656,21 @@ ${sampleBanner()}
 </div>
 
 <!-- ===== INTERACTIVE GPS BOUNDARY MAP ===== -->
-<div class="card" style="margin-bottom:28px;padding:0;overflow:hidden;border-radius:14px;box-shadow:0 4px 20px rgba(15,61,104,0.12)">
-  <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,#071b30 0%,#0f3d68 50%,#0d9488 100%);color:#fff">
+<div id="map-card-wrapper" class="card" style="margin-bottom:28px;padding:0;overflow:hidden;border-radius:14px;box-shadow:0 4px 20px rgba(15,61,104,0.12)">
+  <div class="map-card-header" style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,#071b30 0%,#0f3d68 50%,#0d9488 100%);color:#fff">
     <div style="display:flex;align-items:center;gap:10px">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       <div>
         <div style="font-weight:800;font-size:15px;letter-spacing:-0.2px">West Srinivasa Nagar — Official Boundary Map</div>
-        <div style="font-size:12px;opacity:0.85">Ismailkhanguda, Hyderabad · 4 GPS Survey Points</div>
+        <div style="font-size:12px;opacity:0.85">Ismailkhanguda, Hyderabad · 4 GPS Survey Points &amp; 40 House Plots</div>
       </div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button id="btn-fit-map" class="btn btn-sm" style="background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px">
         🔍 Fit Boundary
+      </button>
+      <button id="btn-expand-map" class="btn btn-sm" style="background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700">
+        ⛶ Expand Map
       </button>
       <button id="btn-view-aerial" class="btn btn-sm" style="background:#ffffff;color:#0f3d68;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:12px">
         📷 Aerial Photo
@@ -637,10 +678,10 @@ ${sampleBanner()}
     </div>
   </div>
 
-  <div id="leaflet-map" style="height:440px;width:100%;position:relative;z-index:1"></div>
+  <div id="leaflet-map" style="height:460px;width:100%;position:relative;z-index:1"></div>
 
   <!-- GPS Survey Boundary Coordinates Panel -->
-  <div style="background:var(--bg-subtle);padding:14px 20px;border-top:1px solid var(--border)">
+  <div class="map-coords-panel" style="background:var(--bg-subtle);padding:14px 20px;border-top:1px solid var(--border)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
       <span style="font-weight:700;font-size:13px;color:var(--text)">📐 Registered Colony GPS Survey Coordinates:</span>
       <span style="font-size:11.5px;color:var(--text-muted)">Click any corner to pinpoint on map</span>
@@ -698,20 +739,20 @@ ${sampleBanner()}
 
 <!-- ===== HOUSE DIRECTORY SEARCH & SCHEMATIC ===== -->
 <div style="margin-top:32px;margin-bottom:16px">
-  <h2 style="font-size:1.35rem;margin:0 0 6px">Colony Plots &amp; House Directory</h2>
-  <p style="color:var(--text-muted);font-size:14px;margin:0">Search and inspect verified residential plots across Block A and Block B.</p>
+  <h2 style="font-size:1.35rem;margin:0 0 6px">Colony Plots &amp; House Directory (${activeCount} Registered Plots)</h2>
+  <p style="color:var(--text-muted);font-size:14px;margin:0">Complete list of surveyed house plots within the 4 colony boundary coordinates across Block A and Block B.</p>
 </div>
 
 <form id="hs" class="search-bar" role="search">
-  <input id="q" type="search" placeholder="Search by House No. (e.g. 5) or Owner Name..." autocomplete="off">
+  <input id="q" type="search" placeholder="Search by House / Plot No. (e.g. 5), Owner Name, or Cross Road..." autocomplete="off">
   <button class="btn btn-primary" type="submit">${icons.search} Search</button>
   <button class="btn alt" type="button" id="rs">Reset</button>
 </form>
 
 <div class="tabs" id="block-tabs">
-  <button data-b="all" aria-pressed="true">All Plots</button>
-  <button data-b="Block A" aria-pressed="false">Block A (1st Cross)</button>
-  <button data-b="Block B" aria-pressed="false">Block B (2nd Cross)</button>
+  <button data-b="all" aria-pressed="true">All Plots (${activeCount})</button>
+  <button data-b="Block A" aria-pressed="false">Block A (Plots 1–20)</button>
+  <button data-b="Block B" aria-pressed="false">Block B (Plots 21–40)</button>
 </div>
 
 <div id="msg" class="err" role="status" aria-live="polite"></div>
@@ -722,7 +763,7 @@ ${sampleBanner()}
       <span>📍 Interactive Colony Schematic (Click house for details)</span>
       <span>Green = Registered | Amber = Selected</span>
     </div>
-    <svg class="map" viewBox="0 0 620 380" role="group" aria-label="Schematic colony house layout">
+    <svg class="map" viewBox="0 0 800 580" role="group" aria-label="Schematic colony house layout">
       ${mapSvg()}
     </svg>
   </div>
@@ -734,6 +775,34 @@ ${sampleBanner()}
       <span>Status:</span>
       <span>Select a plot</span>
     </div>
+  </div>
+</div>
+
+<!-- Complete 40-Plot Directory Cards Grid -->
+<div style="margin-top:28px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <h3 style="margin:0;font-size:1.15rem">All Registered Colony Plots (Surveyed within 4 Corners)</h3>
+    <span style="font-size:12.5px;color:var(--text-muted)">40 Plots mapped across 4 Cross Roads</span>
+  </div>
+  <div id="plot-directory-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+    ${DATA.houses.map((h, i) => `
+      <div class="plot-item-card" data-i="${i}" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all 0.18s ease" onclick="showHouse(${i})">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-weight:800;font-size:14px;color:var(--text)">Plot #${esc(h.house_number)}</span>
+          <span class="tag" style="font-size:10px;padding:2px 6px;background:${h.block === 'Block A' ? 'rgba(13,148,136,0.15)' : 'rgba(2,132,199,0.15)'};color:${h.block === 'Block A' ? '#0d9488' : '#0284c7'}">${esc(h.block)}</span>
+        </div>
+        <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+          ${esc(h.owner_display_name)}
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px">
+          ${esc(h.street_or_lane)}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:6px;font-size:11px">
+          <span style="color:var(--text-muted)">${esc(h.property_type)}</span>
+          <button type="button" class="btn btn-sm btn-outline" style="padding:2px 8px;font-size:10.5px" onclick="event.stopPropagation();focusHouseOnGpsMap(${i})">📍 GPS Map</button>
+        </div>
+      </div>
+    `).join("")}
   </div>
 </div>`;
   },
@@ -900,45 +969,57 @@ ${sampleBanner()}
 };
 
 /* ===== MAP SVG GENERATION ===== */
+/* ===== MAP SVG GENERATION (40 COLONY PLOTS) ===== */
 function pos(h, i) {
   if (h.x && h.y) return [+h.x, +h.y];
-  const inB = h.block === "Block A" ? 0 : 1;
-  const k = DATA.houses.filter(z => z.block === h.block).indexOf(h);
-  return [45 + inB * 310 + (k % 3) * 85, 90 + Math.floor(k / 3) * 120];
+  // 4 Cross Roads:
+  // Lane 1 (Plots 1-10): col 0 -> x = 35
+  // Lane 2 (Plots 11-20): col 1 -> x = 185
+  // Central Avenue divider -> x = 335 to 445
+  // Lane 3 (Plots 21-30): col 2 -> x = 455
+  // Lane 4 (Plots 31-40): col 3 -> x = 605
+  const laneIdx = i < 10 ? 0 : (i < 20 ? 1 : (i < 30 ? 2 : 3));
+  const colX = laneIdx === 0 ? 35 : (laneIdx === 1 ? 185 : (laneIdx === 2 ? 455 : 605));
+  const row = i % 10;
+  const rowY = 72 + row * 48;
+  return [colX, rowY];
 }
 
 function mapSvg() {
   let s = `
   <!-- Background & Schematic Boundary -->
-  <rect x="0" y="0" width="620" height="380" fill="var(--bg-subtle)" rx="12"/>
+  <rect x="0" y="0" width="780" height="580" fill="var(--bg-subtle)" rx="12"/>
   
-  <!-- Roads -->
-  <rect x="30" y="45" width="250" height="28" rx="6" fill="var(--border)" opacity="0.6"/>
-  <text x="155" y="63" fill="var(--text-muted)" font-size="11" font-weight="700" text-anchor="middle">1st Cross Road</text>
-
-  <rect x="340" y="45" width="250" height="28" rx="6" fill="var(--border)" opacity="0.6"/>
-  <text x="465" y="63" fill="var(--text-muted)" font-size="11" font-weight="700" text-anchor="middle">2nd Cross Road</text>
-
-  <!-- Central Avenue / Divider -->
-  <line x1="310" y1="20" x2="310" y2="360" stroke="var(--border)" stroke-width="3" stroke-dasharray="6,6"/>
-  <rect x="290" y="340" width="40" height="24" rx="4" fill="var(--secondary)" opacity="0.9"/>
-  <text x="310" y="356" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">GATE</text>
-
-  <!-- Community Park / Green Area -->
-  <rect x="40" y="335" width="130" height="32" rx="8" fill="#10b981" opacity="0.2"/>
-  <text x="105" y="355" fill="#059669" font-size="11" font-weight="700" text-anchor="middle">🌿 Community Park</text>
-
   <!-- Block Headers -->
-  <text x="45" y="32" fill="var(--primary)" font-size="15" font-weight="800">Block A (West)</text>
-  <text x="345" y="32" fill="var(--primary)" font-size="15" font-weight="800">Block B (East)</text>
+  <rect x="35" y="14" width="290" height="34" rx="8" fill="#0f3d68" opacity="0.12"/>
+  <text x="180" y="36" fill="var(--primary)" font-size="14" font-weight="800" text-anchor="middle">Block A (West) — Plots 1 to 20</text>
+
+  <rect x="455" y="14" width="290" height="34" rx="8" fill="#0d9488" opacity="0.12"/>
+  <text x="600" y="36" fill="var(--secondary)" font-size="14" font-weight="800" text-anchor="middle">Block B (East) — Plots 21 to 40</text>
+
+  <!-- Central Boulevard / Avenue -->
+  <line x1="370" y1="15" x2="370" y2="520" stroke="var(--border)" stroke-width="3" stroke-dasharray="8,6"/>
+  <text x="370" y="270" fill="var(--text-muted)" font-size="10.5" font-weight="700" text-anchor="middle" transform="rotate(-90 370 270)">CENTRAL AVENUE</text>
+
+  <!-- Colony Gate -->
+  <rect x="345" y="525" width="50" height="26" rx="6" fill="var(--secondary)"/>
+  <text x="370" y="542" fill="#ffffff" font-size="10" font-weight="800" text-anchor="middle">GATE</text>
+
+  <!-- Road Labels -->
+  <text x="105" y="62" fill="var(--text-muted)" font-size="10.5" font-weight="700" text-anchor="middle">1st Cross</text>
+  <text x="255" y="62" fill="var(--text-muted)" font-size="10.5" font-weight="700" text-anchor="middle">2nd Cross</text>
+  <text x="525" y="62" fill="var(--text-muted)" font-size="10.5" font-weight="700" text-anchor="middle">3rd Cross</text>
+  <text x="675" y="62" fill="var(--text-muted)" font-size="10.5" font-weight="700" text-anchor="middle">4th Cross</text>
   `;
 
   DATA.houses.forEach((h, i) => {
     const [x, y] = pos(h, i);
+    const shortName = (h.owner_display_name || "").split(" ")[0] || "Plot";
     s += `
     <g class="house" tabindex="0" role="button" data-i="${i}" aria-label="House ${esc(h.house_number)}, ${esc(h.block)}">
-      <rect x="${x}" y="${y}" width="72" height="64" rx="10"/>
-      <text x="${x + 36}" y="${y + 37}" text-anchor="middle">${esc(h.house_number)}</text>
+      <rect x="${x}" y="${y}" width="140" height="40" rx="8"/>
+      <text x="${x + 22}" y="${y + 25}" font-weight="800" font-size="12" text-anchor="middle">#${esc(h.house_number)}</text>
+      <text x="${x + 44}" y="${y + 25}" font-size="10.5" fill="var(--text-muted)">${esc(shortName)}</text>
     </g>`;
   });
 
@@ -949,19 +1030,20 @@ function showHouse(i) {
   const h = DATA.houses[i];
   if (!h) return;
   document.querySelectorAll(".house").forEach(g => g.classList.toggle("sel", +g.dataset.i === i));
+  document.querySelectorAll(".plot-item-card").forEach(c => c.classList.toggle("sel", +c.dataset.i === i));
 
   $("#panel").innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <h3 style="margin:0">House No. ${esc(h.house_number)}</h3>
+      <h3 style="margin:0">Plot No. ${esc(h.house_number)}</h3>
       <span class="tag tag-notice">${esc(h.status || "active")}</span>
     </div>
     <div class="panel-row">
       <span>Plot ID:</span>
-      <span>${esc(h.house_id)}</span>
+      <span><b>${esc(h.house_id)}</b></span>
     </div>
     <div class="panel-row">
       <span>Registered Owner:</span>
-      <span>${esc(h.owner_display_name || "Verified Resident")}</span>
+      <span><b>${esc(h.owner_display_name || "Verified Resident")}</b></span>
     </div>
     <div class="panel-row">
       <span>Block / Sector:</span>
@@ -975,12 +1057,33 @@ function showHouse(i) {
       <span>Property Type:</span>
       <span>${esc(h.property_type || "Residential")}</span>
     </div>
-    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--divider)">
-      <p style="font-size:12.5px;color:var(--text-muted);margin:0">
-        To request corrections or ownership updates, please contact the Committee Secretary.
+    ${h.lat && h.lng ? `
+    <div class="panel-row">
+      <span>GPS Coordinates:</span>
+      <span style="font-family:monospace;font-size:11px">${h.lat}, ${h.lng}</span>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn btn-primary btn-sm" style="width:100%" onclick="focusHouseOnGpsMap(${i})">
+        📍 View Plot on GPS Satellite Map
+      </button>
+    </div>` : ""}
+    <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--divider)">
+      <p style="font-size:12px;color:var(--text-muted);margin:0">
+        Plot surveyed within West Srinivasa Nagar 4-corner boundary.
       </p>
     </div>`;
 }
+
+window.focusHouseOnGpsMap = function(i) {
+  const h = DATA.houses[i];
+  if (!h || !h.lat || !h.lng || !window._colonyMap) return;
+  const wrap = document.getElementById("map-card-wrapper");
+  if (wrap) wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+  window._colonyMap.flyTo([h.lat, h.lng], 19, { animate: true, duration: 0.9 });
+  if (window._houseMarkers && window._houseMarkers[i]) {
+    setTimeout(() => window._houseMarkers[i].openPopup(), 950);
+  }
+};
 
 function initLeafletColonyMap() {
   const mapEl = document.getElementById("leaflet-map");
@@ -1051,10 +1154,64 @@ function initLeafletColonyMap() {
 
   satelliteLayer.addTo(map);
 
-  // Layer Switcher
+  // 40 House Plots mapped inside the 4 corners boundary
+  const houseMarkers = [];
+  const houseLayerGroup = L.layerGroup();
+
+  DATA.houses.forEach((h, idx) => {
+    if (!h.lat || !h.lng) return;
+    const isBlockA = h.block === "Block A";
+    const houseIcon = L.divIcon({
+      className: "colony-house-marker",
+      html: `<div style="
+        background: ${isBlockA ? '#0d9488' : '#0284c7'};
+        color: #ffffff;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        border-radius: 12px;
+        padding: 2px 6px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+      ">#${esc(h.house_number)}</div>`,
+      iconSize: [0, 0]
+    });
+
+    const marker = L.marker([h.lat, h.lng], { icon: houseIcon }).addTo(houseLayerGroup);
+
+    marker.bindPopup(`
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:6px;min-width:190px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-size:15px;font-weight:800;color:#0f3d68">Plot #${esc(h.house_number)}</span>
+          <span style="background:${isBlockA ? '#ccfbf1' : '#e0f2fe'};color:${isBlockA ? '#0f766e' : '#0369a1'};padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700">${esc(h.block)}</span>
+        </div>
+        <div style="font-size:12.5px;color:#1e293b;margin-bottom:4px"><b>Resident:</b> ${esc(h.owner_display_name)}</div>
+        <div style="font-size:11.5px;color:#64748b;margin-bottom:6px"><b>Lane:</b> ${esc(h.street_or_lane)}</div>
+        <div style="font-size:11px;font-family:monospace;background:#f1f5f9;padding:4px 6px;border-radius:4px;color:#475569;margin-bottom:8px">
+          ${h.lat.toFixed(6)}, ${h.lng.toFixed(6)}
+        </div>
+        <button class="btn btn-primary btn-sm" style="width:100%;font-size:11px;padding:5px 8px" onclick="showHouse(${idx})">
+          Inspect in Details Panel
+        </button>
+      </div>
+    `);
+
+    marker.on("click", () => {
+      showHouse(idx);
+    });
+
+    houseMarkers.push(marker);
+  });
+
+  window._houseMarkers = houseMarkers;
+  houseLayerGroup.addTo(map);
+
+  // Layer Switcher with Satellite, Streets, and All 40 Plots overlay
   L.control.layers(
     { "🛰️ Satellite View": satelliteLayer, "🗺️ Street Map": streetLayer },
-    null,
+    { "🏘️ 40 Colony House Plots": houseLayerGroup },
     { position: "topright", collapsed: false }
   ).addTo(map);
 
@@ -1182,6 +1339,31 @@ function bindMap() {
   // Initialize Real Leaflet Interactive GPS Map
   initLeafletColonyMap();
 
+  // Fullscreen / Expand Map Button Handler
+  const expandBtn = $("#btn-expand-map");
+  const mapWrapper = $("#map-card-wrapper");
+  if (expandBtn && mapWrapper) {
+    let isExpanded = false;
+    expandBtn.onclick = () => {
+      isExpanded = !isExpanded;
+      mapWrapper.classList.toggle("map-card-expanded", isExpanded);
+      document.body.style.overflow = isExpanded ? "hidden" : "";
+      expandBtn.innerHTML = isExpanded ? "✕ Exit Fullscreen" : "⛶ Expand Map";
+      expandBtn.style.background = isExpanded ? "#ef4444" : "rgba(255,255,255,0.18)";
+      expandBtn.style.color = "#ffffff";
+      if (window._colonyMap) {
+        setTimeout(() => window._colonyMap.invalidateSize(), 120);
+        setTimeout(() => window._colonyMap.invalidateSize(), 350);
+      }
+    };
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isExpanded) {
+        expandBtn.click();
+      }
+    });
+  }
+
   // Aerial Survey Photo Modal Handlers
   const aerialBtn = $("#btn-view-aerial");
   const aerialModal = $("#aerial-modal");
@@ -1221,6 +1403,11 @@ function bindMap() {
         const match = block === "all" || h.block === block;
         e.classList.toggle("dim", !match);
       });
+      document.querySelectorAll(".plot-item-card").forEach(c => {
+        const h = DATA.houses[+c.dataset.i];
+        const match = block === "all" || h.block === block;
+        c.style.display = match ? "" : "none";
+      });
     };
   });
 
@@ -1236,10 +1423,22 @@ function bindMap() {
         h.house_number.toLowerCase() === q ||
         h.house_id.toLowerCase() === q ||
         (h.owner_display_name || "").toLowerCase().includes(q) ||
+        (h.street_or_lane || "").toLowerCase().includes(q) ||
         (h.block || "").toLowerCase().includes(q);
 
       e.classList.toggle("dim", !match);
       if (match && first < 0 && q) first = +e.dataset.i;
+    });
+
+    document.querySelectorAll(".plot-item-card").forEach(c => {
+      const h = DATA.houses[+c.dataset.i];
+      const match = !q ||
+        h.house_number.toLowerCase() === q ||
+        h.house_id.toLowerCase() === q ||
+        (h.owner_display_name || "").toLowerCase().includes(q) ||
+        (h.street_or_lane || "").toLowerCase().includes(q) ||
+        (h.block || "").toLowerCase().includes(q);
+      c.style.display = match ? "" : "none";
     });
 
     $("#msg").textContent = q && first < 0 ? "No matching plot found for this search." : "";
@@ -1249,6 +1448,10 @@ function bindMap() {
   $("#rs").onclick = () => {
     $("#q").value = "";
     g.forEach(e => e.classList.remove("dim", "sel"));
+    document.querySelectorAll(".plot-item-card").forEach(c => {
+      c.style.display = "";
+      c.classList.remove("sel");
+    });
     $("#msg").textContent = "";
     blockBtns.forEach((btn, idx) => btn.setAttribute("aria-pressed", idx === 0 ? "true" : "false"));
     $("#panel").innerHTML = `
