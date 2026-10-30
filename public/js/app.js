@@ -106,21 +106,128 @@ const sampleBanner = () => DATA.isSample
 
 /* ===== MODEL CONSTITUTION & BYLAWS DATA ===== */
 const BYLAWS = [
-  ["Preamble & Legal Framework", "The West Srinivasa Nagar Residents' Welfare Association is constituted under the applicable Societies Registration Act to promote community welfare, civic cleanliness, and civic peace."],
-  ["Vision of the Community", "To foster a secure, clean, verdant, inclusive, and transparent neighborhood community upholding collective civic consciousness."],
-  ["Core Mission & Mandate", "Maintain community infrastructure, implement 24/7 security, drive green environmental initiatives, and cultivate resident participation."],
-  ["Civic Objectives & Authority Liaison", "Roads, underground drainage, uninterrupted water distribution, colony park upkeep, waste segregation, street lighting, and direct liaison with GHMC, Police, and HMWSSB."],
-  ["Resident Membership & Eligibility", "Eligibility criteria, registration procedures, membership contributions, voting privileges, rights, responsibilities, and dispute provisions."],
-  ["General Body Authority & Annual Meetings", "The General Body represents the supreme decision-making authority; Annual General Body Meetings (AGM) convene yearly with audited financials and quorum compliance."],
-  ["Executive Committee Composition", "Governing council comprising President, 2 Vice Presidents, General Secretary, Joint Secretary, Treasurer, and 8–12 Elected Ward/Lane Representatives."],
-  ["Governance Responsibilities & Roles", "President provides executive leadership; General Secretary directs administrative communications; Treasurer manages transparent double-entry accounting."],
-  ["Fair & Transparent Democratic Elections", "Independent election oversight, nomination scrutiny, secret ballot voting, and a standard 3-year term with democratic limits."],
-  ["Financial Accounting, Auditing & Banking", "Dual-signatory bank account protocols, transparent accounts presentation, periodic statutory external audits, and published budget statements."],
-  ["Standing Sub-Committees", "Specialized resident working committees: Infrastructure & Water, Security & CCTV, Environment & Park, Women & Senior Citizen Welfare, Cultural & Grievance."],
-  ["Annual Community Initiatives & Celebrations", "National day celebrations (Independence & Republic Day), festive gatherings, seasonal plantation drives, and health screening camps."],
-  ["Resident Code of Conduct & Ethics", "High community ethics, respectful mutual engagement, avoidance of encroachments, anti-noise guidelines, and peaceful conflict resolution."],
-  ["Grievance Redressal Mechanism", "Objective 3-tier complaint committee ensuring dispute investigation, friendly mediation, and structured appeal channels."],
-  ["Constitutional Amendments & Dissolution", "Amendments require a two-thirds majority in the General Body with statutory notice; dissolution strictly follows society laws."]
+  [
+    "Preamble",
+    [
+      ["Purpose", "Defines the core intent of the association."],
+      ["Legal Status", "Outlines the registration and legal standing."],
+      ["Welfare Objectives", "Focuses on community-wide welfare goals."]
+    ]
+  ],
+  [
+    "Vision",
+    [
+      ["Safe Community", "Ensuring a secure environment."],
+      ["Clean & Green", "Prioritizing hygiene and environmental health."],
+      ["Inclusive & Transparent", "Fostering openness and fairness for all residents."]
+    ]
+  ],
+  [
+    "Mission",
+    [
+      ["Core Drivers", "Promoting infrastructure development and security."],
+      ["Environmental Focus", "Protecting the local ecosystem."],
+      ["Engagement", "Ensuring absolute financial transparency and resident participation."]
+    ]
+  ],
+  [
+    "Objectives",
+    [
+      ["Infrastructure Support", "Roads, drainage, water, and parks."],
+      ["Daily Utilities", "Security and civic waste management."],
+      ["Community Wellness", "Health, education, culture, and sports."],
+      ["Government Liaison", "Interfacing directly with MMC (Malkajgiri Municipal Corporation) and other agencies."]
+    ]
+  ],
+  [
+    "Membership",
+    [
+      ["Entry Rules", "Criteria for eligibility, admission, and applicable fees."],
+      ["Member Status", "Outlines individual rights and civic responsibilities."],
+      ["Exit Rules", "Directives regarding membership resignation and removal."]
+    ]
+  ],
+  [
+    "General Body",
+    [
+      ["Supreme Authority", "Recognized as the highest decision-making power of the association."],
+      ["Meetings", "Mandates the Annual General Meeting (AGM) and provisions for special meetings."],
+      ["Voting Rules", "Clear guidelines defining quorum and voting thresholds."]
+    ]
+  ],
+  [
+    "Executive Committee",
+    [
+      ["Core Leaders", "Consists of 1 President, 2 Vice Presidents, 1 General Secretary, 1 Joint Secretary, and 1 Treasurer."],
+      ["General Board", "Formed by 8–12 Executive Members."],
+      ["Diversity Representation", "Dedicated seats for women, youth, and senior representatives."]
+    ]
+  ],
+  [
+    "Roles",
+    [
+      ["President", "Provides overall leadership."],
+      ["Vice President (VP)", "Provides necessary operational support."],
+      ["Secretary", "Manages daily administrative work."],
+      ["Treasurer", "Oversees and manages financial accounts."],
+      ["Executive Members", "Drives the practical implementation of projects."]
+    ]
+  ],
+  [
+    "Elections",
+    [
+      ["Fair Process", "Managed by an independent election officer using a secret ballot."],
+      ["Candidate Check", "Fixed rules for nominations and strict scrutiny."],
+      ["Tenure Limits", "Establishes a 2-year tenure with a recommended maximum of two consecutive terms for the President."]
+    ]
+  ],
+  [
+    "Finance",
+    [
+      ["Inflow Sources", "Funded through membership fees, donations, grants, and CSR (Corporate Social Responsibility)."],
+      ["Checks & Balances", "Guided by annual budgets, regular audits, and absolute transparency."],
+      ["Operations", "Enforces dual-signature bank operations for security."]
+    ]
+  ],
+  [
+    "Standing Committees",
+    [
+      ["Operational Teams", "Dedicated panels for Finance, Infrastructure, Security, and Environment."],
+      ["Social Teams", "Focused wings for Women, Youth, and Culture."],
+      ["Legal Shield", "Includes a specialized Legal & Grievance cell."]
+    ]
+  ],
+  [
+    "Annual Activities",
+    [
+      ["Social Days", "Celebration of National days and cultural events."],
+      ["Green & Clean Initiatives", "Organizing plantation drives and cleanliness drives."],
+      ["Wellness & Recreation", "Hosting health camps and sports tournaments."]
+    ]
+  ],
+  [
+    "Code of Ethics",
+    [
+      ["Core Values", "Demands integrity, transparency, and high accountability."],
+      ["Equity", "Complete non-discrimination across the colony."],
+      ["Clarity", "Compulsory conflict-of-interest disclosure for all leaders."]
+    ]
+  ],
+  [
+    "Dispute Resolution",
+    [
+      ["Filing Grievances", "Initial assessment through a dedicated Complaint Committee."],
+      ["Resolution Path", "Emphasizes mediation to settle issues smoothly."],
+      ["Final Check", "Clear structure for filing an internal appeal."]
+    ]
+  ],
+  [
+    "Amendment & Dissolution",
+    [
+      ["Rule Updates", "Requires a strict 2/3 majority vote for any bylaw amendments."],
+      ["Closure Protocol", "Society dissolution handled strictly as per applicable local laws."]
+    ]
+  ]
 ];
 
 /* ===== UI CARD GENERATORS ===== */
@@ -550,16 +657,16 @@ ${sampleBanner()}
     const n = +(location.hash.split("-")[1] || 0);
     return `
 <div class="page-header">
-  <h1>Model Constitution & Association Bylaws</h1>
+  <h1>Constitution & Association Bylaws</h1>
   <p>West Srinivasa Nagar Colony Welfare Association — Governance Framework & Rules.</p>
 </div>
 
 <div class="note">
-  This constitutional draft outlines the operational rules, officer roles, election processes, and financial codes governing the association. Adopted in consensus by the General Body.
+  This constitutional framework outlines the core vision, objectives, governance structure, election regulations, and dispute mechanisms adopted by the General Body of West Srinivasa Nagar.
 </div>
 
 <div class="search-bar">
-  <input id="bl-search" type="search" placeholder="Filter bylaws by keyword (e.g. elections, quorum, finance)..." autocomplete="off">
+  <input id="bl-search" type="search" placeholder="Filter bylaws by keyword (e.g. elections, tenure, finance, MMC, grievance)..." autocomplete="off">
 </div>
 
 <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
@@ -569,12 +676,22 @@ ${sampleBanner()}
 </div>
 
 <div id="bl">
-  ${BYLAWS.map((b, i) => `
+  ${BYLAWS.map((b, i) => {
+    const title = b[0];
+    const points = b[1];
+    return `
     <details id="b${i + 1}"${n === i + 1 ? " open" : ""}>
-      <summary><span style="color:var(--secondary);margin-right:8px">Article ${i + 1}:</span> ${esc(b[0])}</summary>
-      <p>${esc(b[1])}</p>
-    </details>
-  `).join("")}
+      <summary><span style="color:var(--secondary);margin-right:8px;font-weight:800">${i + 1}.</span> ${esc(title)}</summary>
+      <div style="padding:12px 16px 8px;display:flex;flex-direction:column;gap:10px">
+        ${points.map(pt => `
+          <div style="display:flex;align-items:baseline;gap:8px;font-size:14.5px;line-height:1.5">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--secondary);margin-top:7px;flex-shrink:0"></span>
+            <span><strong style="color:var(--text);font-weight:700">${esc(pt[0])}:</strong> <span style="color:var(--text-muted)">${esc(pt[1])}</span></span>
+          </div>
+        `).join("")}
+      </div>
+    </details>`;
+  }).join("")}
 </div>`;
   },
 
