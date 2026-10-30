@@ -78,6 +78,7 @@ function syncAllFestivalFolders() {
   });
 
   const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/mpeg', 'video/3gpp'];
   const newRows = [];
 
   function processFolder(folder, categoryName, defaultTitle) {
@@ -88,7 +89,9 @@ function syncAllFestivalFolders() {
     while (files.hasNext()) {
       const file = files.next();
       const mime = file.getMimeType();
-      if (!IMAGE_TYPES.includes(mime)) continue;
+      const isImg = IMAGE_TYPES.includes(mime);
+      const isVid = VIDEO_TYPES.includes(mime) || mime.startsWith('video/');
+      if (!isImg && !isVid) continue;
 
       try {
         file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
@@ -96,25 +99,29 @@ function syncAllFestivalFolders() {
         Logger.log('  -> Note setting permission for ' + file.getName() + ': ' + err.message);
       }
 
-      const thumbUrl = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1400';
-      if (existingUrls.includes(thumbUrl)) continue;
+      // Videos store their preview URL with #video tag; images use w1400 thumbnail
+      const mediaUrl = isVid 
+        ? ('https://drive.google.com/file/d/' + file.getId() + '/preview#video')
+        : ('https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1400');
+
+      if (existingUrls.includes(mediaUrl) || existingUrls.includes(mediaUrl.replace('#video', ''))) continue;
 
       const rawName = file.getName().replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
-      const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : defaultTitle;
+      const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : (defaultTitle + (isVid ? ' Video' : ''));
 
       const row = {};
       row['id']        = Utilities.getUuid().slice(0, 8);
       row['title']     = title;
       row['category']  = categoryName;
-      row['alt']       = title + ' celebration';
-      row['image_url'] = thumbUrl;
+      row['alt']       = isVid ? (title + ' (Video)') : (title + ' celebration');
+      row['image_url'] = mediaUrl;
       row['status']    = 'published';
 
       newRows.push(h.map(c => row[c] != null ? row[c] : ''));
-      existingUrls.push(thumbUrl);
+      existingUrls.push(mediaUrl);
       count++;
     }
-    Logger.log('  -> Added ' + count + ' new image(s) from folder: ' + folder.getName());
+    Logger.log('  -> Added ' + count + ' new media item(s) from folder: ' + folder.getName());
   }
 
   // 1. Scan Main Festivals parent folder and all its subfolders

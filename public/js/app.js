@@ -430,9 +430,22 @@ ${sampleBanner()}
 </div>
 
 <div class="grid">
-  ${filtered.length ? filtered.map(g => g.image_url ? `
-    <div class="gal-card" data-lb="${url(g.image_url)}" role="button" tabindex="0" aria-label="Open photo: ${esc(g.title)}">
-      <img src="${url(g.image_url)}" alt="${esc(g.alt || g.title)}" loading="lazy">
+  ${filtered.length ? filtered.map(g => {
+    const isVid = (g.image_url && g.image_url.includes("#video")) || (g.alt && g.alt.includes("(Video)"));
+    const vidIdMatch = g.image_url ? g.image_url.match(/\/d\/([^\/]+)/) : null;
+    const thumbSrc = isVid && vidIdMatch 
+      ? `https://drive.google.com/thumbnail?id=${vidIdMatch[1]}&sz=w800`
+      : url(g.image_url);
+
+    return g.image_url ? `
+    <div class="gal-card ${isVid ? 'gal-video' : ''}" data-lb="${url(g.image_url)}" data-type="${isVid ? 'video' : 'image'}" role="button" tabindex="0" aria-label="Open ${isVid ? 'video' : 'photo'}: ${esc(g.title)}">
+      <img src="${thumbSrc}" alt="${esc(g.alt || g.title)}" loading="lazy">
+      ${isVid ? `
+        <div class="video-play-badge" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        </div>
+        <span class="tag tag-video">Video</span>
+      ` : ''}
       <div class="gal-info">
         <h4 class="gal-title">${esc(g.title)}</h4>
         <span class="gal-cat">${esc(g.category)}</span>
@@ -446,7 +459,8 @@ ${sampleBanner()}
         <span class="gal-cat">${esc(g.category)}</span>
       </div>
     </div>
-  `).join("") : `<div class="empty">No photos found in this category yet.</div>`}
+  `;
+  }).join("") : `<div class="empty">No photos or videos found in this category yet.</div>`}
 </div>`;
   },
 
@@ -1401,31 +1415,70 @@ async function panel() {
   };
 }
 
-/* ===== LIGHTBOX & TOAST SETUP ===== */
+/* ===== LIGHTBOX & TOAST SETUP (Images & Videos) ===== */
 document.body.insertAdjacentHTML(
   "beforeend",
   `
   <div id="toast" role="status"></div>
-  <div id="lb" role="dialog" aria-label="Photo viewer modal">
-    <button class="btn" id="lbx" aria-label="Close photo preview">✕</button>
-    <img alt="Expanded photo preview">
+  <div id="lb" role="dialog" aria-label="Media viewer modal">
+    <button class="btn" id="lbx" aria-label="Close media preview">✕</button>
+    <div id="lb-content">
+      <img id="lb-img" alt="Expanded photo preview">
+      <iframe id="lb-vid" allow="autoplay; encrypted-media" allowfullscreen style="display:none;width:85vw;max-width:900px;height:70vh;border:none;border-radius:12px;background:#000;"></iframe>
+    </div>
   </div>`
 );
+
+function closeLightbox() {
+  const lb = $("#lb");
+  if (!lb) return;
+  lb.classList.remove("on");
+  const vid = $("#lb-vid");
+  if (vid) {
+    vid.src = "";
+    vid.style.display = "none";
+  }
+  const img = $("#lb-img");
+  if (img) {
+    img.src = "";
+    img.style.display = "none";
+  }
+}
 
 window.addEventListener("click", e => {
   const b = e.target.closest("[data-lb]");
   if (b) {
-    $("#lb img").src = b.dataset.lb;
+    const rawUrl = b.dataset.lb;
+    const isVid = b.dataset.type === "video" || rawUrl.includes("#video");
+    const img = $("#lb-img");
+    const vid = $("#lb-vid");
+
+    if (isVid) {
+      if (img) img.style.display = "none";
+      if (vid) {
+        vid.src = rawUrl.replace("#video", "");
+        vid.style.display = "block";
+      }
+    } else {
+      if (vid) {
+        vid.src = "";
+        vid.style.display = "none";
+      }
+      if (img) {
+        img.src = rawUrl;
+        img.style.display = "block";
+      }
+    }
     $("#lb").classList.add("on");
     return;
   }
   if (e.target.id === "lb" || e.target.id === "lbx") {
-    $("#lb").classList.remove("on");
+    closeLightbox();
   }
 });
 
 window.addEventListener("keydown", e => {
-  if (e.key === "Escape") $("#lb").classList.remove("on");
+  if (e.key === "Escape") closeLightbox();
 });
 
 /* Start the application */

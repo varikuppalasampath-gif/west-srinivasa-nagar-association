@@ -1555,3 +1555,48 @@ footer {
     border-color: #cccccc !important;
   }
 }
+
+/* Video Gallery Badge & Overlay */
+.gal-card.gal-video {
+  position: relative;
+}
+
+.video-play-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  background: rgba(15, 61, 104, 0.88);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gal-card:hover .video-play-badge {
+  transform: translate(-50%, -50%) scale(1.15);
+  background: rgba(13, 148, 136, 0.95);
+}
+
+.tag-video {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+}
