@@ -22,7 +22,9 @@ let DATA = {
     { id: "G3", title: "Colony Cleanliness Drive", category: "Community", alt: "Volunteers cleaning the avenue" },
     { id: "G4", title: "Children Sports Day", category: "Events", alt: "Children participating in races" },
     { id: "G5", title: "Green Plantation Drive", category: "Community", alt: "Planting saplings along the roadside" },
-    { id: "G6", title: "Ganesha Chaturthi Celebration", category: "Festivals", alt: "Colony pandal and celebration" }
+    { id: "G6", title: "Ganesha Chaturthi Celebration", category: "Festivals", alt: "Colony pandal and celebration" },
+    { id: "G7", title: "Bathukamma Floral Arrangement", category: "Bathukamma Celebrations", alt: "Traditional floral decoration", image_url: "https://drive.google.com/thumbnail?id=1gUfD2rx6C06drLcvHq-Y4Ha0ZjXwJ4mT&sz=w1400" },
+    { id: "G8", title: "Women Celebrating Bathukamma", category: "Bathukamma Celebrations", alt: "Colony women dancing around Bathukamma", image_url: "https://drive.google.com/thumbnail?id=1krjksVMxMTeZc80xxwzIji3dqIhe_pKy&sz=w1400" }
   ],
   committee: [
     { id: "C1", name: "R. Narayana Murthy", designation: "President", term: "2025–2027", public_contact: "president.wsn@gmail.com" },
@@ -401,28 +403,34 @@ ${sampleBanner()}
   },
 
   gallery() {
-    const cats = ["All", ...new Set(DATA.gallery.map(g => g.category))];
-    const f = location.hash.split("-")[1] || "All";
-    const filtered = DATA.gallery.filter(g => f === "All" || g.category === decodeURIComponent(f));
+    // Collect valid categories that have images (or all unique categories)
+    const validGallery = DATA.gallery.filter(g => g.image_url);
+    const pool = validGallery.length ? validGallery : DATA.gallery;
+    const cats = ["All", ...new Set(pool.map(g => g.category).filter(Boolean))];
+    
+    // Support category hash format #gallery-CategoryName
+    const hashPart = location.hash.includes("-") ? location.hash.substring(location.hash.indexOf("-") + 1) : "All";
+    const f = decodeURIComponent(hashPart);
+    const filtered = pool.filter(g => f === "All" || g.category === f);
 
     return `
 <div class="page-header">
   <h1>Community Photo Gallery</h1>
-  <p>Memories and moments from our colony celebrations, plantation drives, and sports days.</p>
+  <p>Memories and moments from our colony festivals, community celebrations, and welfare drives.</p>
 </div>
 
 ${sampleBanner()}
 
-<div class="tabs">
+<div class="tabs" style="margin-bottom:28px">
   ${cats.map(c => `
-    <a href="#gallery-${encodeURIComponent(c)}" class="${c === decodeURIComponent(f) ? "active" : ""}">
+    <a href="#gallery-${encodeURIComponent(c)}" class="${c === f ? "active" : ""}">
       ${esc(c)}
     </a>
   `).join("")}
 </div>
 
 <div class="grid">
-  ${filtered.map(g => g.image_url ? `
+  ${filtered.length ? filtered.map(g => g.image_url ? `
     <div class="gal-card" data-lb="${url(g.image_url)}" role="button" tabindex="0" aria-label="Open photo: ${esc(g.title)}">
       <img src="${url(g.image_url)}" alt="${esc(g.alt || g.title)}" loading="lazy">
       <div class="gal-info">
@@ -438,7 +446,7 @@ ${sampleBanner()}
         <span class="gal-cat">${esc(g.category)}</span>
       </div>
     </div>
-  `).join("")}
+  `).join("") : `<div class="empty">No photos found in this category yet.</div>`}
 </div>`;
   },
 
@@ -1101,7 +1109,7 @@ const FIELDS = {
   ],
   gallery: [
     ["title", "Title", "text", 1],
-    ["category", "Category", "select:Festivals,Events,Community,Other"],
+    ["category", "Category", "select:Bathukamma Celebrations,Festivals,Events,Community,Other"],
     ["alt", "Short photo description", "text"],
     ["image_url", "Photos (multiple allowed)", "up:image", 1]
   ],

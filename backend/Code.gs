@@ -21,95 +21,154 @@ const safe = s => { s = String(s == null ? '' : s).trim(); return /^[=+\-@]/.tes
  * EXACT FOLDER IMPORT: Uses your Bathukamma folder ID directly
  * Folder URL: https://drive.google.com/drive/folders/1tpKpofdT3suiPOMNr_n-Rrs0xzrJLJba
  */
-function importBathukammaImages() {
-  const FOLDER_ID = '1tpKpofdT3suiPOMNr_n-Rrs0xzrJLJba';
-  const CATEGORY  = 'Festivals';
-  const ALT_TEXT  = 'Bathukamma festival celebration';
 
-  Logger.log('Starting Bathukamma import...');
+/**
+ * ============================================================================
+ * PARENT FESTIVAL FOLDER AUTO-SCANNER
+ * ============================================================================
+ * Parent Folder: https://drive.google.com/drive/folders/1Kq2lWakUlyD7Ni1mJctBx4S0FXMKgJjV
+ *
+ * HOW IT WORKS:
+ * 1. Scans the parent folder and every sub-folder inside it.
+ * 2. If an image is in a sub-folder (e.g., "Bathukamma", "Deepavali", "Plantation"),
+ *    the subfolder name automatically becomes its category / tab on the website!
+ * 3. Also scans images directly in the root of the folder.
+ * 4. Plus checks any individual folder IDs listed in INDIVIDUAL_FOLDERS.
+ */
+const MAIN_FESTIVALS_FOLDER_ID = '1Kq2lWakUlyD7Ni1mJctBx4S0FXMKgJjV';
 
-  let folder;
-  try {
-    folder = DriveApp.getFolderById(FOLDER_ID);
-    Logger.log('Found folder: ' + folder.getName());
-  } catch (e) {
-    Logger.log('ERROR opening folder: ' + e.message);
-    throw new Error('Could not open folder with ID ' + FOLDER_ID + '. Details: ' + e.message);
+const INDIVIDUAL_FOLDERS = [
+  {
+    folderId: '1tpKpofdT3suiPOMNr_n-Rrs0xzrJLJba',
+    category: 'Bathukamma Celebrations',
+    defaultTitle: 'Bathukamma Celebration',
+    altText: 'Bathukamma festival celebration'
   }
+];
 
+function syncAllFestivalFolders() {
   const sh = book().getSheetByName(T.gallery);
   if (!sh) {
     Logger.log('ERROR: Sheet "' + T.gallery + '" not found in spreadsheet.');
-    throw new Error('Gallery sheet not found');
+    return;
   }
-  Logger.log('Found sheet: ' + sh.getName());
 
   const h = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
   const urlIdx = h.indexOf('image_url');
-  Logger.log('Header columns: ' + JSON.stringify(h));
+  const catIdx = h.indexOf('category');
+  const titleIdx = h.indexOf('title');
+  const altIdx = h.indexOf('alt');
 
-  const existingUrls = sh.getLastRow() > 1
-    ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length)
-        .getValues()
-        .map(r => String(r[urlIdx]))
-        .filter(Boolean)
+  // Load existing URLs and normalize categories if needed
+  const data = sh.getLastRow() > 1
+    ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length).getValues()
     : [];
 
-  const files = folder.getFiles();
-  let count = 0;
-  let fileCount = 0;
+  const existingUrls = [];
+  data.forEach((row, idx) => {
+    const u = String(row[urlIdx] || '').trim();
+    if (u) {
+      existingUrls.push(u);
+      const title = String(row[titleIdx] || '').toLowerCase();
+      const alt = String(row[altIdx] || '').toLowerCase();
+      if ((title.includes('bathukamma') || alt.includes('bathukamma')) && row[catIdx] !== 'Bathukamma Celebrations') {
+        sh.getRange(idx + 2, catIdx + 1).setValue('Bathukamma Celebrations');
+      }
+    }
+  });
+
+  const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   const newRows = [];
 
-  while (files.hasNext()) {
-    const file = files.next();
-    fileCount++;
-    const mime = file.getMimeType();
-    Logger.log('File #' + fileCount + ': "' + file.getName() + '" (type: ' + mime + ')');
+  function processFolder(folder, categoryName, defaultTitle) {
+    Logger.log('Processing folder: "' + folder.getName() + '" as category: [' + categoryName + ']');
+    const files = folder.getFiles();
+    let count = 0;
 
-    if (!mime.startsWith('image/')) {
-      Logger.log('  -> Skipping non-image');
-      continue;
+    while (files.hasNext()) {
+      const file = files.next();
+      const mime = file.getMimeType();
+      if (!IMAGE_TYPES.includes(mime)) continue;
+
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (err) {
+        Logger.log('  -> Note setting permission for ' + file.getName() + ': ' + err.message);
+      }
+
+      const thumbUrl = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1400';
+      if (existingUrls.includes(thumbUrl)) continue;
+
+      const rawName = file.getName().replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
+      const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : defaultTitle;
+
+      const row = {};
+      row['id']        = Utilities.getUuid().slice(0, 8);
+      row['title']     = title;
+      row['category']  = categoryName;
+      row['alt']       = title + ' celebration';
+      row['image_url'] = thumbUrl;
+      row['status']    = 'published';
+
+      newRows.push(h.map(c => row[c] != null ? row[c] : ''));
+      existingUrls.push(thumbUrl);
+      count++;
     }
-
-    try {
-      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    } catch (err) {
-      Logger.log('  -> Note setting permission: ' + err.message);
-    }
-
-    const thumbUrl = 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1400';
-    if (existingUrls.includes(thumbUrl)) {
-      Logger.log('  -> Already imported, skipping');
-      continue;
-    }
-
-    const rawName = file.getName().replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ').trim();
-    const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : 'Bathukamma Celebration';
-
-    const row = {};
-    row['id']        = Utilities.getUuid().slice(0, 8);
-    row['title']     = title;
-    row['category']  = CATEGORY;
-    row['alt']       = ALT_TEXT;
-    row['image_url'] = thumbUrl;
-    row['status']    = 'published';
-
-    newRows.push(h.map(c => row[c] != null ? row[c] : ''));
-    existingUrls.push(thumbUrl);
-    count++;
+    Logger.log('  -> Added ' + count + ' new image(s) from folder: ' + folder.getName());
   }
 
-  Logger.log('Total files scanned: ' + fileCount + ', new images to insert: ' + newRows.length);
+  // 1. Scan Main Festivals parent folder and all its subfolders
+  if (MAIN_FESTIVALS_FOLDER_ID && !MAIN_FESTIVALS_FOLDER_ID.startsWith('YOUR_')) {
+    try {
+      const mainFolder = DriveApp.getFolderById(MAIN_FESTIVALS_FOLDER_ID);
+      Logger.log('Found Main Folder: "' + mainFolder.getName() + '"');
+
+      // Check subfolders inside main folder (e.g. Bathukamma, Deepavali, Sankranti)
+      const subfolders = mainFolder.getFolders();
+      let subfolderCount = 0;
+      while (subfolders.hasNext()) {
+        const sub = subfolders.next();
+        subfolderCount++;
+        const folderName = sub.getName().trim();
+        // Add " Celebrations" if not already present in the folder name for a clean title
+        const cat = folderName.toLowerCase().includes('celebration') || folderName.toLowerCase().includes('program')
+          ? folderName
+          : folderName + ' Celebrations';
+
+        processFolder(sub, cat, folderName + ' Celebration');
+      }
+
+      // Also check files directly in the main folder
+      processFolder(mainFolder, 'Festivals', 'Festival Celebration');
+    } catch (e) {
+      Logger.log('Could not scan MAIN_FESTIVALS_FOLDER_ID: ' + e.message);
+    }
+  }
+
+  // 2. Scan individual folders (like Bathukamma from previous account)
+  INDIVIDUAL_FOLDERS.forEach(cfg => {
+    if (!cfg.folderId) return;
+    try {
+      const folder = DriveApp.getFolderById(cfg.folderId);
+      processFolder(folder, cfg.category, cfg.defaultTitle);
+    } catch (e) {
+      Logger.log('Could not scan folder ID ' + cfg.folderId + ': ' + e.message);
+    }
+  });
 
   if (newRows.length > 0) {
     sh.getRange(sh.getLastRow() + 1, 1, newRows.length, h.length)
       .setNumberFormat('@')
       .setValues(newRows);
-    Logger.log('SUCCESS: Inserted ' + newRows.length + ' rows into Gallery sheet!');
+    Logger.log('SUCCESS: Inserted ' + newRows.length + ' total new rows into Gallery sheet!');
   }
 
   CacheService.getScriptCache().removeAll(Object.keys(T).map(x => 'pub3_' + x));
-  Logger.log('Cache cleared successfully.');
+  Logger.log('Cache cleared successfully. Done!');
+}
+
+function importBathukammaImages() {
+  syncAllFestivalFolders();
 }
 
 function readAll(name) {
