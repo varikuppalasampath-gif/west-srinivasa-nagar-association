@@ -89,22 +89,35 @@ function syncAllFestivalFolders() {
     while (files.hasNext()) {
       const file = files.next();
       const mime = file.getMimeType();
-      const isImg = IMAGE_TYPES.includes(mime);
-      const isVid = VIDEO_TYPES.includes(mime) || mime.startsWith('video/');
-      if (!isImg && !isVid) continue;
+      const fileName = file.getName();
+      const isImg = IMAGE_TYPES.includes(mime) || /\.(jpe?g|png|webp|gif)$/i.test(fileName);
+      const isVid = VIDEO_TYPES.includes(mime) || mime.startsWith('video/') || /\.(mp4|mov|webm|m4v|3gp|avi|mkv)$/i.test(fileName);
+      
+      if (!isImg && !isVid) {
+        Logger.log('  -> Skipping unsupported file: ' + fileName + ' (' + mime + ')');
+        continue;
+      }
 
       try {
         file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
       } catch (err) {
-        Logger.log('  -> Note setting permission for ' + file.getName() + ': ' + err.message);
+        Logger.log('  -> Note setting permission for ' + fileName + ': ' + err.message);
       }
 
       // Videos store their preview URL with #video tag; images use w1400 thumbnail
+      const fileId = file.getId();
       const mediaUrl = isVid 
-        ? ('https://drive.google.com/file/d/' + file.getId() + '/preview#video')
-        : ('https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w1400');
+        ? ('https://drive.google.com/file/d/' + fileId + '/preview#video')
+        : ('https://drive.google.com/thumbnail?id=' + fileId + '&sz=w1400');
 
-      if (existingUrls.includes(mediaUrl) || existingUrls.includes(mediaUrl.replace('#video', ''))) continue;
+      // Check if file is already imported by either its ID or URL
+      const alreadyImported = existingUrls.some(u => u.includes(fileId));
+      if (alreadyImported) {
+        Logger.log('  -> Already imported: ' + fileName);
+        continue;
+      }
+
+      Logger.log('  -> Found new ' + (isVid ? 'VIDEO' : 'IMAGE') + ': ' + fileName);
 
       const rawName = file.getName().replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
       const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : (defaultTitle + (isVid ? ' Video' : ''));
