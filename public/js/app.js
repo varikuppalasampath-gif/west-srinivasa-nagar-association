@@ -372,7 +372,7 @@ const views = {
       View Latest Notices ${icons.arrowRight}
     </a>
     <a class="btn btn-glass" href="#map">
-      ${icons.mapPin} House Directory Map
+      ${icons.mapPin} Colony Boundary Map
     </a>
     <a class="btn btn-glass" href="#contact">
       Contact Committee
@@ -434,7 +434,7 @@ ${sampleBanner()}
     <a class="card lift" href="#map">
       <div style="font-size:24px;margin-bottom:12px;color:var(--secondary)">${icons.mapPin}</div>
       <h3>Interactive Colony Map →</h3>
-      <p style="color:var(--text-muted);font-size:14px;margin:0">Search and locate house numbers, lanes, and registered plots across Block A & Block B.</p>
+      <p style="color:var(--text-muted);font-size:14px;margin:0">Explore verified GPS colony boundary coordinates, satellite view, and official survey points.</p>
     </a>
     <a class="card lift" href="#gallery">
       <div style="font-size:24px;margin-bottom:12px;color:var(--amber)">${icons.tree}</div>
@@ -647,12 +647,12 @@ ${sampleBanner()}
     const activeCount = DATA.houses.filter(h => h.status !== "inactive").length;
     return `
 <div class="page-header">
-  <h1>Colony Map &amp; House Directory</h1>
-  <p>Interactive GPS boundary map, satellite imagery, and verified plot directory for West Srinivasa Nagar (${activeCount} registered houses).</p>
+  <h1>Colony Map</h1>
+  <p>Official GPS boundary survey and interactive satellite map for West Srinivasa Nagar.</p>
 </div>
 
 <div class="note">
-  <b>Privacy &amp; Security Note:</b> This portal displays official boundaries and house identifiers approved by the association. Personal phone numbers and private resident details are never disclosed publicly.
+  <b>Official Boundary Survey:</b> This map displays the registered perimeter and 4 verified GPS boundary coordinates of West Srinivasa Nagar Colony (Ismailkhanguda, Hyderabad).
 </div>
 
 <!-- ===== INTERACTIVE GPS BOUNDARY MAP ===== -->
@@ -662,7 +662,7 @@ ${sampleBanner()}
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       <div>
         <div style="font-weight:800;font-size:15px;letter-spacing:-0.2px">West Srinivasa Nagar — Official Boundary Map</div>
-        <div style="font-size:12px;opacity:0.85">Ismailkhanguda, Hyderabad · 4 GPS Survey Points &amp; 40 House Plots</div>
+        <div style="font-size:12px;opacity:0.85">Ismailkhanguda, Hyderabad · 4 GPS Survey Points</div>
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -678,7 +678,7 @@ ${sampleBanner()}
     </div>
   </div>
 
-  <div id="leaflet-map" style="height:460px;width:100%;position:relative;z-index:1"></div>
+  <div id="leaflet-map" style="height:480px;width:100%;position:relative;z-index:1"></div>
 
   <!-- GPS Survey Boundary Coordinates Panel -->
   <div class="map-coords-panel" style="background:var(--bg-subtle);padding:14px 20px;border-top:1px solid var(--border)">
@@ -734,75 +734,6 @@ ${sampleBanner()}
       <img src="images/colony-aerial-boundary.jpg" alt="West Srinivasa Nagar Aerial Survey Map" style="max-width:100%;max-height:75vh;border-radius:8px;object-fit:contain">
       <p style="margin:10px 0 0;font-size:12px;color:var(--text-muted)">High-resolution aerial satellite capture matching the 4 registered boundary coordinates.</p>
     </div>
-  </div>
-</div>
-
-<!-- ===== HOUSE DIRECTORY SEARCH & SCHEMATIC ===== -->
-<div style="margin-top:32px;margin-bottom:16px">
-  <h2 style="font-size:1.35rem;margin:0 0 6px">Colony Plots &amp; House Directory (${activeCount} Registered Plots)</h2>
-  <p style="color:var(--text-muted);font-size:14px;margin:0">Complete list of surveyed house plots within the 4 colony boundary coordinates across Block A and Block B.</p>
-</div>
-
-<form id="hs" class="search-bar" role="search">
-  <input id="q" type="search" placeholder="Search by House / Plot No. (e.g. 5), Owner Name, or Cross Road..." autocomplete="off">
-  <button class="btn btn-primary" type="submit">${icons.search} Search</button>
-  <button class="btn alt" type="button" id="rs">Reset</button>
-</form>
-
-<div class="tabs" id="block-tabs">
-  <button data-b="all" aria-pressed="true">All Plots (${activeCount})</button>
-  <button data-b="Block A" aria-pressed="false">Block A (Plots 1–20)</button>
-  <button data-b="Block B" aria-pressed="false">Block B (Plots 21–40)</button>
-</div>
-
-<div id="msg" class="err" role="status" aria-live="polite"></div>
-
-<div class="mapwrap">
-  <div class="map-card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:13px;color:var(--text-muted)">
-      <span>📍 Interactive Colony Schematic (Click house for details)</span>
-      <span>Green = Registered | Amber = Selected</span>
-    </div>
-    <svg class="map" viewBox="0 0 800 580" role="group" aria-label="Schematic colony house layout">
-      ${mapSvg()}
-    </svg>
-  </div>
-
-  <div class="card house-panel" id="panel" aria-live="polite">
-    <h3>House Inspector</h3>
-    <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">Click or hover over any house plot on the map to inspect verified details.</p>
-    <div class="panel-row">
-      <span>Status:</span>
-      <span>Select a plot</span>
-    </div>
-  </div>
-</div>
-
-<!-- Complete 40-Plot Directory Cards Grid -->
-<div style="margin-top:28px">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-    <h3 style="margin:0;font-size:1.15rem">All Registered Colony Plots (Surveyed within 4 Corners)</h3>
-    <span style="font-size:12.5px;color:var(--text-muted)">40 Plots mapped across 4 Cross Roads</span>
-  </div>
-  <div id="plot-directory-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
-    ${DATA.houses.map((h, i) => `
-      <div class="plot-item-card" data-i="${i}" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all 0.18s ease" onclick="showHouse(${i})">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <span style="font-weight:800;font-size:14px;color:var(--text)">Plot #${esc(h.house_number)}</span>
-          <span class="tag" style="font-size:10px;padding:2px 6px;background:${h.block === 'Block A' ? 'rgba(13,148,136,0.15)' : 'rgba(2,132,199,0.15)'};color:${h.block === 'Block A' ? '#0d9488' : '#0284c7'}">${esc(h.block)}</span>
-        </div>
-        <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-          ${esc(h.owner_display_name)}
-        </div>
-        <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:8px">
-          ${esc(h.street_or_lane)}
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:6px;font-size:11px">
-          <span style="color:var(--text-muted)">${esc(h.property_type)}</span>
-          <button type="button" class="btn btn-sm btn-outline" style="padding:2px 8px;font-size:10.5px" onclick="event.stopPropagation();focusHouseOnGpsMap(${i})">📍 GPS Map</button>
-        </div>
-      </div>
-    `).join("")}
   </div>
 </div>`;
   },
@@ -1154,64 +1085,10 @@ function initLeafletColonyMap() {
 
   satelliteLayer.addTo(map);
 
-  // 40 House Plots mapped inside the 4 corners boundary
-  const houseMarkers = [];
-  const houseLayerGroup = L.layerGroup();
-
-  DATA.houses.forEach((h, idx) => {
-    if (!h.lat || !h.lng) return;
-    const isBlockA = h.block === "Block A";
-    const houseIcon = L.divIcon({
-      className: "colony-house-marker",
-      html: `<div style="
-        background: ${isBlockA ? '#0d9488' : '#0284c7'};
-        color: #ffffff;
-        border: 2px solid #ffffff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-        border-radius: 12px;
-        padding: 2px 6px;
-        font-size: 10px;
-        font-weight: 800;
-        white-space: nowrap;
-        transform: translate(-50%, -50%);
-        cursor: pointer;
-      ">#${esc(h.house_number)}</div>`,
-      iconSize: [0, 0]
-    });
-
-    const marker = L.marker([h.lat, h.lng], { icon: houseIcon }).addTo(houseLayerGroup);
-
-    marker.bindPopup(`
-      <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:6px;min-width:190px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
-          <span style="font-size:15px;font-weight:800;color:#0f3d68">Plot #${esc(h.house_number)}</span>
-          <span style="background:${isBlockA ? '#ccfbf1' : '#e0f2fe'};color:${isBlockA ? '#0f766e' : '#0369a1'};padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700">${esc(h.block)}</span>
-        </div>
-        <div style="font-size:12.5px;color:#1e293b;margin-bottom:4px"><b>Resident:</b> ${esc(h.owner_display_name)}</div>
-        <div style="font-size:11.5px;color:#64748b;margin-bottom:6px"><b>Lane:</b> ${esc(h.street_or_lane)}</div>
-        <div style="font-size:11px;font-family:monospace;background:#f1f5f9;padding:4px 6px;border-radius:4px;color:#475569;margin-bottom:8px">
-          ${h.lat.toFixed(6)}, ${h.lng.toFixed(6)}
-        </div>
-        <button class="btn btn-primary btn-sm" style="width:100%;font-size:11px;padding:5px 8px" onclick="showHouse(${idx})">
-          Inspect in Details Panel
-        </button>
-      </div>
-    `);
-
-    marker.on("click", () => {
-      showHouse(idx);
-    });
-
-    houseMarkers.push(marker);
-  });
-
-  window._houseMarkers = houseMarkers;
-  houseLayerGroup.addTo(map);
-
-  // Layer Switcher with Satellite, Streets, and All 40 Plots overlay
+  // Layer Switcher with Satellite & Street Map
   L.control.layers(
     { "🛰️ Satellite View": satelliteLayer, "🗺️ Street Map": streetLayer },
-    { "🏘️ 40 Colony House Plots": houseLayerGroup },
+    null,
     { position: "topright", collapsed: false }
   ).addTo(map);
 
@@ -1377,91 +1254,6 @@ function bindMap() {
       if (e.target === aerialModal) aerialModal.style.display = "none";
     };
   }
-
-  const g = document.querySelectorAll(".house");
-  g.forEach(e => {
-    const i = +e.dataset.i;
-    e.onmouseenter = e.onfocus = () => showHouse(i);
-    e.onclick = () => showHouse(i);
-    e.onkeydown = k => {
-      if (k.key === "Enter" || k.key === " ") {
-        k.preventDefault();
-        showHouse(i);
-      }
-    };
-  });
-
-  // Block Filter Tabs
-  const blockBtns = $$("#block-tabs button");
-  blockBtns.forEach(b => {
-    b.onclick = () => {
-      blockBtns.forEach(btn => btn.setAttribute("aria-pressed", "false"));
-      b.setAttribute("aria-pressed", "true");
-      const block = b.dataset.b;
-      g.forEach(e => {
-        const h = DATA.houses[+e.dataset.i];
-        const match = block === "all" || h.block === block;
-        e.classList.toggle("dim", !match);
-      });
-      document.querySelectorAll(".plot-item-card").forEach(c => {
-        const h = DATA.houses[+c.dataset.i];
-        const match = block === "all" || h.block === block;
-        c.style.display = match ? "" : "none";
-      });
-    };
-  });
-
-  // Search Input Handler
-  $("#hs").onsubmit = ev => {
-    ev.preventDefault();
-    const q = $("#q").value.trim().toLowerCase();
-    let first = -1;
-
-    g.forEach(e => {
-      const h = DATA.houses[+e.dataset.i];
-      const match = !q ||
-        h.house_number.toLowerCase() === q ||
-        h.house_id.toLowerCase() === q ||
-        (h.owner_display_name || "").toLowerCase().includes(q) ||
-        (h.street_or_lane || "").toLowerCase().includes(q) ||
-        (h.block || "").toLowerCase().includes(q);
-
-      e.classList.toggle("dim", !match);
-      if (match && first < 0 && q) first = +e.dataset.i;
-    });
-
-    document.querySelectorAll(".plot-item-card").forEach(c => {
-      const h = DATA.houses[+c.dataset.i];
-      const match = !q ||
-        h.house_number.toLowerCase() === q ||
-        h.house_id.toLowerCase() === q ||
-        (h.owner_display_name || "").toLowerCase().includes(q) ||
-        (h.street_or_lane || "").toLowerCase().includes(q) ||
-        (h.block || "").toLowerCase().includes(q);
-      c.style.display = match ? "" : "none";
-    });
-
-    $("#msg").textContent = q && first < 0 ? "No matching plot found for this search." : "";
-    if (first >= 0) showHouse(first);
-  };
-
-  $("#rs").onclick = () => {
-    $("#q").value = "";
-    g.forEach(e => e.classList.remove("dim", "sel"));
-    document.querySelectorAll(".plot-item-card").forEach(c => {
-      c.style.display = "";
-      c.classList.remove("sel");
-    });
-    $("#msg").textContent = "";
-    blockBtns.forEach((btn, idx) => btn.setAttribute("aria-pressed", idx === 0 ? "true" : "false"));
-    $("#panel").innerHTML = `
-      <h3>House Inspector</h3>
-      <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">Click or hover over any house plot on the map to inspect verified details.</p>
-      <div class="panel-row">
-        <span>Status:</span>
-        <span>Select a plot</span>
-      </div>`;
-  };
 }
 
 /* ===== CONTACT FORM BINDING ===== */
