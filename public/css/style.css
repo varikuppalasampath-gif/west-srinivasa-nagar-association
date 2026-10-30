@@ -1353,42 +1353,52 @@ details p {
   position: fixed;
   right: 24px;
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0f3d68 0%, #0d9488 100%);
-  border: 2px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 4px 18px rgba(15, 61, 104, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #0f3d68 0%, #0d9488 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 4px 18px rgba(15, 61, 104, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   cursor: pointer;
   z-index: 99;
   opacity: 0;
   pointer-events: none;
   transform: translateY(12px);
-  transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
 }
 
-#back-to-top svg {
-  width: 22px;
-  height: 22px;
-  stroke: #ffffff !important;
-  stroke-width: 3;
-  fill: none !important;
-  display: block;
+/* Pure CSS Arrow Indicator - Cannot be hidden by fonts, SVGs, or OS defaults */
+.up-arrow-icon {
+  display: block !important;
+  width: 14px !important;
+  height: 14px !important;
+  border-top: 3.5px solid #ffffff !important;
+  border-left: 3.5px solid #ffffff !important;
+  transform: rotate(45deg) !important;
+  margin-top: 5px !important;
+  border-radius: 2px !important;
+  box-sizing: border-box !important;
 }
 
 #back-to-top.visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
 }
 
 #back-to-top:hover {
-  background: linear-gradient(135deg, #091e3a 0%, #0f766e 100%);
-  transform: translateY(-3px) scale(1.08);
-  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.55);
+  background: linear-gradient(135deg, #091e3a 0%, #0f766e 100%) !important;
+  transform: translateY(-3px) scale(1.08) !important;
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.6) !important;
+}
+
+#back-to-top:hover .up-arrow-icon {
+  transform: rotate(45deg) translateY(-2px) !important;
 }
 
 #lb {
