@@ -194,13 +194,36 @@ function readPublic(key) {
   return rows;
 }
 
+/**
+ * Auto-syncs Drive folders in background when needed so user NEVER has to manually run Apps Script.
+ * Runs on every request when cache has expired (max once every 5 minutes).
+ */
+function maybeAutoSyncDrive() {
+  const cache = CacheService.getScriptCache();
+  const lastSync = cache.get('last_drive_sync');
+  if (!lastSync) {
+    try {
+      syncAllFestivalFolders();
+      cache.put('last_drive_sync', '1', 300); // 5-minute throttle
+    } catch (e) {
+      Logger.log('Auto-sync note: ' + e.message);
+    }
+  }
+}
+
 function doGet(e) {
   try {
     const a = (e && e.parameter && e.parameter.action) || 'all';
+    
+    // Automatically scan Drive whenever gallery or all data is requested!
+    if (a === 'gallery' || a === 'all' || a === 'sync') {
+      maybeAutoSyncDrive();
+    }
+    
     if (a === 'all') { const d = {}; Object.keys(T).forEach(k => d[k] = readPublic(k)); return out(true, 'OK', d); }
     if (T[a]) return out(true, 'OK', readPublic(a));
     return out(false, 'Unknown action');
-  } catch (err) { console.error(err); return out(false, 'Unable to process the request'); }
+  } catch (err) { console.error(err); return out(false, 'Unable to process the request: ' + err.message); }
 }
 
 const SUPER_ADMINS = ['varikuppalaa.sampath@gmail.com'];
