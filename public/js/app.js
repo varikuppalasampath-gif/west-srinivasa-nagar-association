@@ -643,28 +643,40 @@ ${sampleBanner()}
   <div style="background:var(--bg-subtle);padding:14px 20px;border-top:1px solid var(--border)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
       <span style="font-weight:700;font-size:13px;color:var(--text)">📐 Registered Colony GPS Survey Coordinates:</span>
-      <span style="font-size:11.5px;color:var(--text-muted)">WGS84 Datum</span>
+      <span style="font-size:11.5px;color:var(--text-muted)">Click any corner to pinpoint on map</span>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;font-size:12px">
-      <div style="background:var(--card);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
-        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-right:6px">1</span>
-        <b>Corner 1 (SW):</b><br>
-        <span style="font-family:monospace;color:var(--text-muted)">17°27'32.22"N 78°38'28.23"E</span>
+      <div class="corner-coord-card" data-idx="0" style="background:var(--card);padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:transform 0.15s ease,box-shadow 0.15s ease" title="Click to pinpoint Corner 1 on map">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700">1</span>
+          <b>Corner 1 (SW):</b>
+          <span style="margin-left:auto;font-size:11px;color:#0d9488">Pinpoint ↗</span>
+        </div>
+        <span style="font-family:monospace;color:var(--text-muted);font-weight:600">17°27'32.22"N 78°38'28.23"E</span>
       </div>
-      <div style="background:var(--card);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
-        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-right:6px">2</span>
-        <b>Corner 2 (NW):</b><br>
-        <span style="font-family:monospace;color:var(--text-muted)">17°27'39.43"N 78°38'32.03"E</span>
+      <div class="corner-coord-card" data-idx="1" style="background:var(--card);padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:transform 0.15s ease,box-shadow 0.15s ease" title="Click to pinpoint Corner 2 on map">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700">2</span>
+          <b>Corner 2 (NW):</b>
+          <span style="margin-left:auto;font-size:11px;color:#0d9488">Pinpoint ↗</span>
+        </div>
+        <span style="font-family:monospace;color:var(--text-muted);font-weight:600">17°27'39.43"N 78°38'32.03"E</span>
       </div>
-      <div style="background:var(--card);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
-        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-right:6px">3</span>
-        <b>Corner 3 (NE):</b><br>
-        <span style="font-family:monospace;color:var(--text-muted)">17°27'35.78"N 78°38'40.19"E</span>
+      <div class="corner-coord-card" data-idx="2" style="background:var(--card);padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:transform 0.15s ease,box-shadow 0.15s ease" title="Click to pinpoint Corner 3 on map">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700">3</span>
+          <b>Corner 3 (NE):</b>
+          <span style="margin-left:auto;font-size:11px;color:#0d9488">Pinpoint ↗</span>
+        </div>
+        <span style="font-family:monospace;color:var(--text-muted);font-weight:600">17°27'35.78"N 78°38'40.19"E</span>
       </div>
-      <div style="background:var(--card);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
-        <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700;margin-right:6px">4</span>
-        <b>Corner 4 (SE):</b><br>
-        <span style="font-family:monospace;color:var(--text-muted)">17°27'28.14"N 78°38'35.82"E</span>
+      <div class="corner-coord-card" data-idx="3" style="background:var(--card);padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:transform 0.15s ease,box-shadow 0.15s ease" title="Click to pinpoint Corner 4 on map">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span style="display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;background:#0d9488;color:#fff;border-radius:50%;font-size:10px;font-weight:700">4</span>
+          <b>Corner 4 (SE):</b>
+          <span style="margin-left:auto;font-size:11px;color:#0d9488">Pinpoint ↗</span>
+        </div>
+        <span style="font-family:monospace;color:var(--text-muted);font-weight:600">17°27'28.14"N 78°38'35.82"E</span>
       </div>
     </div>
   </div>
@@ -972,9 +984,15 @@ function showHouse(i) {
 
 function initLeafletColonyMap() {
   const mapEl = document.getElementById("leaflet-map");
-  if (!mapEl || typeof L === "undefined") return;
+  if (!mapEl) return;
 
-  // Clean up previous instance if navigating between views
+  // If Leaflet library is still loading, wait and retry
+  if (typeof L === "undefined") {
+    setTimeout(initLeafletColonyMap, 80);
+    return;
+  }
+
+  // Clean up previous Leaflet instance if navigating between views
   if (window._colonyMap) {
     try {
       window._colonyMap.remove();
@@ -983,17 +1001,20 @@ function initLeafletColonyMap() {
     }
     window._colonyMap = null;
   }
+  if (mapEl._leaflet_id) {
+    mapEl._leaflet_id = null;
+  }
 
-  // 4 Verified GPS Boundary Coordinates for West Srinivasa Nagar:
-  // 1: 17°27'32.22"N 78°38'28.23"E -> 17.458950, 78.641175
-  // 2: 17°27'39.43"N 78°38'32.03"E -> 17.460953, 78.642231
-  // 3: 17°27'35.78"N 78°38'40.19"E -> 17.459939, 78.644497
-  // 4: 17°27'28.14"N 78°38'35.82"E -> 17.457817, 78.643283
+  // 4 Official GPS Boundary Survey Coordinates for West Srinivasa Nagar:
+  // Corner 1: 17°27'32.22"N 78°38'28.23"E -> 17.458950, 78.641175
+  // Corner 2: 17°27'39.43"N 78°38'32.03"E -> 17.460953, 78.642231
+  // Corner 3: 17°27'35.78"N 78°38'40.19"E -> 17.459939, 78.644497
+  // Corner 4: 17°27'28.14"N 78°38'35.82"E -> 17.457817, 78.643283
   const BOUNDARY_POINTS = [
-    { name: "Corner 1 (SW)", lat: 17.458950, lng: 78.641175, dms: "17°27'32.22\"N 78°38'28.23\"E" },
-    { name: "Corner 2 (NW)", lat: 17.460953, lng: 78.642231, dms: "17°27'39.43\"N 78°38'32.03\"E" },
-    { name: "Corner 3 (NE)", lat: 17.459939, lng: 78.644497, dms: "17°27'35.78\"N 78°38'40.19\"E" },
-    { name: "Corner 4 (SE)", lat: 17.457817, lng: 78.643283, dms: "17°27'28.14\"N 78°38'35.82\"E" }
+    { name: "Corner 1 (SW)", lat: 17.458950, lng: 78.641175, dms: "17°27'32.22\"N 78°38'28.23\"E", color: "#0d9488" },
+    { name: "Corner 2 (NW)", lat: 17.460953, lng: 78.642231, dms: "17°27'39.43\"N 78°38'32.03\"E", color: "#0d9488" },
+    { name: "Corner 3 (NE)", lat: 17.459939, lng: 78.644497, dms: "17°27'35.78\"N 78°38'40.19\"E", color: "#0d9488" },
+    { name: "Corner 4 (SE)", lat: 17.457817, lng: 78.643283, dms: "17°27'28.14\"N 78°38'35.82\"E", color: "#0d9488" }
   ];
 
   const polygonLatLngs = BOUNDARY_POINTS.map(p => [p.lat, p.lng]);
@@ -1010,7 +1031,7 @@ function initLeafletColonyMap() {
   });
   window._colonyMap = map;
 
-  // Base Layers
+  // Base Layer 1: Esri Satellite World Imagery (Default)
   const satelliteLayer = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
@@ -1019,6 +1040,7 @@ function initLeafletColonyMap() {
     }
   );
 
+  // Base Layer 2: OpenStreetMap Standard
   const streetLayer = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
@@ -1027,7 +1049,6 @@ function initLeafletColonyMap() {
     }
   );
 
-  // Default to Satellite view
   satelliteLayer.addTo(map);
 
   // Layer Switcher
@@ -1037,14 +1058,14 @@ function initLeafletColonyMap() {
     { position: "topright", collapsed: false }
   ).addTo(map);
 
-  // Colony Boundary Polygon
+  // Colony Boundary Polygon connecting the 4 corners
   const boundaryPolygon = L.polygon(polygonLatLngs, {
     color: "#0d9488",
-    weight: 3.5,
+    weight: 4,
     opacity: 0.95,
     fillColor: "#0f3d68",
-    fillOpacity: 0.18,
-    dashArray: "6, 6"
+    fillOpacity: 0.22,
+    dashArray: "8, 6"
   }).addTo(map);
 
   boundaryPolygon.bindPopup(`
@@ -1058,24 +1079,62 @@ function initLeafletColonyMap() {
     </div>
   `);
 
-  // Corner markers with coordinate tooltips
-  BOUNDARY_POINTS.forEach((pt) => {
-    const marker = L.circleMarker([pt.lat, pt.lng], {
-      radius: 6,
-      fillColor: "#ffffff",
+  // Render 4 Bold Numbered Corner Badges
+  const cornerMarkers = [];
+  BOUNDARY_POINTS.forEach((pt, idx) => {
+    // Numbered Badge Icon
+    const cornerIcon = L.divIcon({
+      className: "colony-corner-badge",
+      html: `<div style="
+        background: #0f3d68;
+        color: #ffffff;
+        border: 2px solid #ffffff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+      ">
+        <span style="background:#0d9488;color:#fff;border-radius:50%;width:18px;height:18px;line-height:18px;text-align:center;font-size:10px;font-weight:900">${idx + 1}</span>
+        <span>Corner ${idx + 1}</span>
+      </div>`,
+      iconSize: [0, 0]
+    });
+
+    const marker = L.marker([pt.lat, pt.lng], { icon: cornerIcon }).addTo(map);
+
+    marker.bindPopup(`
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:6px">
+        <div style="font-weight:800;font-size:15px;color:#0f3d68;margin-bottom:4px">📍 ${pt.name}</div>
+        <div style="font-size:12px;color:#475569;margin-bottom:8px">Official Colony Survey Boundary Point #${idx + 1}</div>
+        <div style="background:#f0fdfa;border:1px solid #ccfbf1;padding:8px 10px;border-radius:6px;font-family:monospace;font-size:12px;font-weight:700;color:#0f766e">
+          ${pt.dms}
+        </div>
+        <div style="font-size:11.5px;color:#64748b;margin-top:6px">
+          Decimal: <b>${pt.lat.toFixed(6)}, ${pt.lng.toFixed(6)}</b>
+        </div>
+      </div>
+    `);
+
+    // Circular marker base
+    L.circleMarker([pt.lat, pt.lng], {
+      radius: 7,
       color: "#0d9488",
       weight: 3,
-      opacity: 1,
+      fillColor: "#ffffff",
       fillOpacity: 1
     }).addTo(map);
 
-    marker.bindTooltip(`<b>${pt.name}</b><br><span style="font-family:monospace;font-size:11px">${pt.dms}</span>`, {
-      direction: "top",
-      offset: [0, -6]
-    });
+    cornerMarkers.push(marker);
   });
 
-  // Center Marker
+  // Colony Center Marker
   const centerIcon = L.divIcon({
     className: "colony-center-pin",
     html: `<div style="background:#0f3d68;color:#fff;padding:5px 10px;border-radius:14px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,0.35);border:2px solid #fff;display:inline-flex;align-items:center;gap:6px">
@@ -1090,23 +1149,33 @@ function initLeafletColonyMap() {
     .bindPopup("<b>West Srinivasa Nagar Colony Center</b><br>Ismailkhanguda, Hyderabad");
 
   // Initial bounds fit
-  map.fitBounds(boundaryPolygon.getBounds(), { padding: [35, 35] });
+  map.fitBounds(boundaryPolygon.getBounds(), { padding: [40, 40] });
 
-  // Fit button click listener
+  // Fit Boundary button listener
   const fitBtn = document.getElementById("btn-fit-map");
   if (fitBtn) {
     fitBtn.onclick = () => {
-      map.fitBounds(boundaryPolygon.getBounds(), { padding: [35, 35] });
+      map.fitBounds(boundaryPolygon.getBounds(), { padding: [40, 40] });
     };
   }
 
-  // Force map container to recalculate layout dimensions inside SPA
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 200);
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 600);
+  // Interactive Coordinate Cards Click Handlers
+  document.querySelectorAll(".corner-coord-card").forEach(card => {
+    card.onclick = () => {
+      const idx = +card.dataset.idx;
+      if (BOUNDARY_POINTS[idx]) {
+        const pt = BOUNDARY_POINTS[idx];
+        map.flyTo([pt.lat, pt.lng], 18, { animate: true, duration: 0.8 });
+        if (cornerMarkers[idx]) {
+          setTimeout(() => cornerMarkers[idx].openPopup(), 850);
+        }
+      }
+    };
+  });
+
+  // Ensure map recalculates tile layout in dynamic SPA views
+  setTimeout(() => { map.invalidateSize(); }, 150);
+  setTimeout(() => { map.invalidateSize(); }, 500);
 }
 
 function bindMap() {

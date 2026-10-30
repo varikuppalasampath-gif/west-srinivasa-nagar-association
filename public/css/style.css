@@ -1633,17 +1633,12 @@ footer {
 
 /* Leaflet Map Integration */
 #leaflet-map {
-  z-index: 10 !important;
-  background: #1e293b;
-}
-
-.leaflet-pane {
-  z-index: 10 !important;
-}
-
-.leaflet-top,
-.leaflet-bottom {
-  z-index: 20 !important;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 460px;
+  background: #0f172a;
+  overflow: hidden;
 }
 
 .leaflet-control-layers {
