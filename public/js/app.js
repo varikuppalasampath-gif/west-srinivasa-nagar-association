@@ -380,18 +380,18 @@ const views = {
   </div>
 
   <div class="stats">
-    <div class="stat">
+    <a class="stat" href="#events" title="View Upcoming Community Events">
       <b>${up.length}</b>
-      <span>Upcoming Events</span>
-    </div>
-    <div class="stat">
+      <span>Upcoming Events &rarr;</span>
+    </a>
+    <a class="stat" href="#announcements" title="View Active Notices & Announcements">
       <b>${DATA.announcements.length}</b>
-      <span>Active Notices</span>
-    </div>
-    <div class="stat">
+      <span>Active Notices &rarr;</span>
+    </a>
+    <a class="stat" href="#committee" title="View Executive Committee Members">
       <b>${DATA.committee.length}</b>
-      <span>Committee Members</span>
-    </div>
+      <span>Committee Members &rarr;</span>
+    </a>
   </div>
 </section>
 

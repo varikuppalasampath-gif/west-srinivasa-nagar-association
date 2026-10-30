@@ -603,17 +603,23 @@ main {
 }
 
 .stat {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(8px);
   border-radius: var(--radius-md);
   padding: 16px 20px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .stat b {
