@@ -381,10 +381,6 @@ const views = {
 
   <div class="stats">
     <div class="stat">
-      <b>${activeHouses}</b>
-      <span>Registered Houses</span>
-    </div>
-    <div class="stat">
       <b>${up.length}</b>
       <span>Upcoming Events</span>
     </div>
@@ -433,7 +429,7 @@ ${sampleBanner()}
   <div class="grid">
     <a class="card lift" href="#map">
       <div style="font-size:24px;margin-bottom:12px;color:var(--secondary)">${icons.mapPin}</div>
-      <h3>Interactive Colony Map →</h3>
+      <h3>Colony Map →</h3>
       <p style="color:var(--text-muted);font-size:14px;margin:0">Explore verified GPS colony boundary coordinates, satellite view, and official survey points.</p>
     </a>
     <a class="card lift" href="#gallery">
