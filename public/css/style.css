@@ -1353,22 +1353,30 @@ details p {
   position: fixed;
   right: 24px;
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, #0f3d68 0%, #0d9488 100%);
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 4px 18px rgba(15, 61, 104, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 30;
+  z-index: 99;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(10px);
-  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease, border-color 0.2s ease;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#back-to-top svg {
+  width: 22px;
+  height: 22px;
+  stroke: #ffffff !important;
+  stroke-width: 3;
+  fill: none !important;
+  display: block;
 }
 
 #back-to-top.visible {
@@ -1378,11 +1386,9 @@ details p {
 }
 
 #back-to-top:hover {
-  background: var(--bg-subtle);
-  border-color: var(--secondary);
-  color: var(--secondary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
+  background: linear-gradient(135deg, #091e3a 0%, #0f766e 100%);
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.55);
 }
 
 #lb {
