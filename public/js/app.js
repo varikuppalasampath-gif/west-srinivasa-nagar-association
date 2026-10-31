@@ -1478,6 +1478,7 @@ function route() {
   // Close mobile nav if open
   $("#nav").classList.remove("open");
   $("#menu").setAttribute("aria-expanded", "false");
+  $("#menu").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
 
   // View-specific bindings
   if (v === "map") bindMap();
@@ -1524,10 +1525,28 @@ async function init() {
   }
 
   // Hamburger Menu
-  $("#menu").onclick = () => {
+  const hamburgerSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
+  const closeSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+
+  $("#menu").onclick = (e) => {
+    e.stopPropagation();
     const isOpen = $("#nav").classList.toggle("open");
     $("#menu").setAttribute("aria-expanded", String(isOpen));
+    $("#menu").innerHTML = isOpen ? closeSvg : hamburgerSvg;
   };
+
+  // Close mobile nav when clicking outside
+  document.addEventListener("click", (e) => {
+    const nav = $("#nav");
+    const menu = $("#menu");
+    if (nav && nav.classList.contains("open")) {
+      if (!nav.contains(e.target) && !menu.contains(e.target)) {
+        nav.classList.remove("open");
+        menu.setAttribute("aria-expanded", "false");
+        menu.innerHTML = hamburgerSvg;
+      }
+    }
+  });
 
   // Theme Toggle
   $("#theme").onclick = () => {
