@@ -545,14 +545,18 @@ ${sampleBanner()}
 
   gallery() {
     // Collect valid categories that have images (or all unique categories)
+    // Automatically strip trailing "Celebrations" so Drive folder names like "Bathukamma" match cleanly
     const validGallery = DATA.gallery.filter(g => g.image_url);
-    const pool = validGallery.length ? validGallery : DATA.gallery;
+    const pool = (validGallery.length ? validGallery : DATA.gallery).map(g => ({
+      ...g,
+      category: String(g.category || "").replace(/\s+(Celebrations|Celebration)$/i, "").trim() || "Festivals"
+    }));
     const cats = ["All", ...new Set(pool.map(g => g.category).filter(Boolean))];
     
     // Support category hash format #gallery-CategoryName
     const hashPart = location.hash.includes("-") ? location.hash.substring(location.hash.indexOf("-") + 1) : "All";
     const f = decodeURIComponent(hashPart);
-    const filtered = pool.filter(g => f === "All" || g.category === f);
+    const filtered = pool.filter(g => f === "All" || g.category.toLowerCase() === f.toLowerCase());
 
     return `
 <div class="page-header">
