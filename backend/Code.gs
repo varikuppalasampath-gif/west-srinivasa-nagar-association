@@ -59,16 +59,32 @@ function syncAllFestivalFolders() {
   const titleIdx = h.indexOf('title');
   const altIdx = h.indexOf('alt');
 
-  // Load existing URLs
+  // Load existing URLs and clean up existing categories in the sheet
   const data = sh.getLastRow() > 1
     ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length).getValues()
     : [];
 
   const existingUrls = [];
-  data.forEach((row) => {
+  let cleanedCount = 0;
+  data.forEach((row, idx) => {
     const u = String(row[urlIdx] || '').trim();
     if (u) existingUrls.push(u);
+
+    // Automatically strip any trailing " Celebrations" or " Celebration" from existing rows
+    const currentCat = String(row[catIdx] || '').trim();
+    if (currentCat) {
+      const cleanedCat = currentCat.replace(/\s+(Celebrations|Celebration)$/i, '').trim();
+      if (cleanedCat && cleanedCat !== currentCat) {
+        sh.getRange(idx + 2, catIdx + 1).setValue(cleanedCat);
+        row[catIdx] = cleanedCat;
+        cleanedCount++;
+      }
+    }
   });
+
+  if (cleanedCount > 0) {
+    Logger.log('Cleaned "Celebrations" from ' + cleanedCount + ' existing row(s) in Gallery sheet.');
+  }
 
   const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/mpeg', 'video/3gpp'];
@@ -142,15 +158,15 @@ function syncAllFestivalFolders() {
       while (subfolders.hasNext()) {
         const sub = subfolders.next();
         subfolderCount++;
-        const folderName = sub.getName().trim();
-        // Use the exact folder name as the category
+        // Strip any trailing "Celebrations" or "Celebration" if present in the Drive folder name
+        const folderName = sub.getName().trim().replace(/\s+(Celebrations|Celebration)$/i, '').trim();
         const cat = folderName;
 
         processFolder(sub, cat, folderName);
       }
 
       // Also check files directly in the main folder
-      processFolder(mainFolder, 'Festivals', 'Festival Celebration');
+      processFolder(mainFolder, 'Festivals', 'Festival');
     } catch (e) {
       Logger.log('Could not scan MAIN_FESTIVALS_FOLDER_ID: ' + e.message);
     }
@@ -180,6 +196,43 @@ function syncAllFestivalFolders() {
 
 function importBathukammaImages() {
   syncAllFestivalFolders();
+}
+
+/**
+ * Run this function directly in Apps Script to instantly clean all existing rows
+ * in your Google Sheet's Gallery tab, stripping " Celebrations" or " Celebration".
+ */
+function cleanAllCelebrationsFromGallerySheet() {
+  const sh = book().getSheetByName(T.gallery);
+  if (!sh) throw new Error('Sheet "Gallery" not found');
+  const h = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+  const catIdx = h.indexOf('category');
+  if (catIdx === -1) throw new Error('Column "category" not found');
+
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) {
+    Logger.log('No data rows to clean.');
+    return;
+  }
+
+  const range = sh.getRange(2, catIdx + 1, lastRow - 1, 1);
+  const values = range.getValues();
+  let count = 0;
+
+  for (let i = 0; i < values.length; i++) {
+    const val = String(values[i][0] || '').trim();
+    const cleaned = val.replace(/\s+(Celebrations|Celebration)$/i, '').trim();
+    if (cleaned !== val) {
+      values[i][0] = cleaned;
+      count++;
+    }
+  }
+
+  if (count > 0) {
+    range.setValues(values);
+    try { CacheService.getScriptCache().removeAll(Object.keys(T).map(x => 'pub3_' + x)); } catch (e) {}
+  }
+  Logger.log('Successfully cleaned "Celebrations" from ' + count + ' row(s) in Gallery sheet!');
 }
 
 function readAll(name) {
