@@ -609,19 +609,22 @@ ${sampleBanner()}
     // Map members by designation for org-chart
     const byDesig = {};
     DATA.committee.forEach(m => { byDesig[m.designation] = m; });
-    const president   = byDesig["President"]        || {};
-    const secretary   = byDesig["General Secretary"] || {};
-    const treasurer   = byDesig["Treasurer"]         || {};
-    const jSecretary  = byDesig["Joint Secretary"]   || {};
-    const execInfra   = byDesig["Executive Member (Infra)"]     || {};
-    const execSec     = byDesig["Executive Member (Security)"]  || {};
+    const president  = byDesig["President"]                      || {};
+    const vp         = byDesig["Vice President"]                 || {};
+    const secretary  = byDesig["General Secretary"]              || {};
+    const treasurer  = byDesig["Treasurer"]                      || {};
+    const jSecretary = byDesig["Joint Secretary"]                || {};
+    const execInfra  = byDesig["Executive Member (Infra)"]       || {};
+    const execSec    = byDesig["Executive Member (Security)"]    || {};
 
-    const orgNode = (member, cls, icon) => `
-      <div class="org-node ${cls}">
-        <div class="org-icon">${icon}</div>
-        <div class="org-node-name">${esc(member.name || "—")}</div>
-        <div class="org-node-role">${esc(member.designation || "")}</div>
-        ${member.public_contact ? `<a class="org-email" href="mailto:${esc(member.public_contact)}">${esc(member.public_contact)}</a>` : ""}
+    // Collect "Members" tier: Joint Secretary + Executive Members
+    const members = [jSecretary, execInfra, execSec].filter(m => m.name);
+
+    const orgNode = (label, sublabel, contact) => `
+      <div class="org-node org-box">
+        <div class="org-node-role">${esc(label)}</div>
+        ${sublabel ? `<div class="org-node-name">${esc(sublabel)}</div>` : ""}
+        ${contact  ? `<a class="org-email" href="mailto:${esc(contact)}">${esc(contact)}</a>` : ""}
       </div>`;
 
     return `
@@ -638,40 +641,34 @@ ${sampleBanner()}
 
   <!-- Level 1: President -->
   <div class="org-level org-level-1">
-    ${orgNode(president, "org-president", `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`)}
+    ${orgNode("President", president.name || "", president.public_contact || "")}
   </div>
 
-  <!-- Connector from President down -->
-  <div class="org-connector-v-top"></div>
+  <!-- Vertical connector: President → VP -->
+  <div class="org-v-line"></div>
 
-  <!-- Horizontal spine for Level 2 -->
-  <div class="org-spine-wrap">
-    <div class="org-spine"></div>
-    <div class="org-spine-drop org-drop-left"></div>
-    <div class="org-spine-drop org-drop-center"></div>
-    <div class="org-spine-drop org-drop-right"></div>
-  </div>
-
-  <!-- Level 2: Secretary, VP placeholder, Treasurer -->
+  <!-- Level 2: Vice President -->
   <div class="org-level org-level-2">
-    ${orgNode(secretary,  "org-secretary",  `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`)}
-    <div class="org-node org-vp org-node-vacant">
-      <div class="org-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <div class="org-node-name">—</div>
-      <div class="org-node-role">Vice President</div>
-      <div class="org-vacant-tag">Position Vacant</div>
-    </div>
-    ${orgNode(treasurer,  "org-treasurer",  `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`)}
+    ${orgNode("Vice President", vp.name || "Position Vacant", vp.public_contact || "")}
   </div>
 
-  <!-- Connector down to Level 3 -->
-  <div class="org-connector-v-mid"></div>
+  <!-- VP → 3-branch connector -->
+  <div class="org-v-line"></div>
+  <div class="org-branch-wrap">
+    <div class="org-branch-h"></div>
+    <div class="org-branch-drop org-branch-drop-l"></div>
+    <div class="org-branch-drop org-branch-drop-c"></div>
+    <div class="org-branch-drop org-branch-drop-r"></div>
+  </div>
 
-  <!-- Level 3: Joint Secretary & Executive Members -->
+  <!-- Level 3: Secretary | Treasurer | Members -->
   <div class="org-level org-level-3">
-    ${orgNode(jSecretary, "org-joint-sec",  `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`)}
-    ${orgNode(execInfra,  "org-exec",       `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`)}
-    ${orgNode(execSec,    "org-exec",       `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`)}
+    ${orgNode("Secretary", secretary.name || "", secretary.public_contact || "")}
+    ${orgNode("Treasurer", treasurer.name || "", treasurer.public_contact || "")}
+    <div class="org-node org-box org-members-box">
+      <div class="org-node-role">Members</div>
+      ${members.map(m => `<div class="org-member-item">${esc(m.name)} <span class="org-member-desig">(${esc(m.designation)})</span></div>`).join("")}
+    </div>
   </div>
 </div>
 
