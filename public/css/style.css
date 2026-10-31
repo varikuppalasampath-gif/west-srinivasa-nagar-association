@@ -2233,9 +2233,17 @@ footer {
   /* Buttons full width in forms */
   form .btn[type="submit"] { width: 100%; }
 
-  /* Header brand text shrink */
-  .brand-name { font-size: 14px !important; }
-  .brand-sub  { display: none; }
+  /* Header brand text */
+  .brand { gap: 10px; }
+  .brand-icon { width: 36px; height: 36px; border-radius: 10px; }
+  .brand-icon svg { width: 18px; height: 18px; }
+  .brand-title { font-size: 14px !important; line-height: 1.15; }
+  .brand-sub {
+    display: block !important;
+    font-size: 9.5px !important;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+  }
 }
 
 /* ---- Touch devices: remove hover transforms (prevents stuck states) ---- */
