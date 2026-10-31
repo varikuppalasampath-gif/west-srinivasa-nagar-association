@@ -159,8 +159,7 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-height) + 16px);
   -webkit-text-size-adjust: 100%;
-  /* Prevent horizontal scroll on all devices */
-  overflow-x: hidden;
+  /* NOTE: Do NOT add overflow-x:hidden here — it breaks position:absolute nav drawer */
 }
 
 body {
