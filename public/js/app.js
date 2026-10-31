@@ -23,8 +23,8 @@ let DATA = {
     { id: "G4", title: "Children Sports Day", category: "Events", alt: "Children participating in races" },
     { id: "G5", title: "Green Plantation Drive", category: "Community", alt: "Planting saplings along the roadside" },
     { id: "G6", title: "Ganesha Chaturthi Celebration", category: "Festivals", alt: "Colony pandal and celebration" },
-    { id: "G7", title: "Bathukamma Floral Arrangement", category: "Bathukamma Celebrations", alt: "Traditional floral decoration", image_url: "https://drive.google.com/thumbnail?id=1gUfD2rx6C06drLcvHq-Y4Ha0ZjXwJ4mT&sz=w1400" },
-    { id: "G8", title: "Women Celebrating Bathukamma", category: "Bathukamma Celebrations", alt: "Colony women dancing around Bathukamma", image_url: "https://drive.google.com/thumbnail?id=1krjksVMxMTeZc80xxwzIji3dqIhe_pKy&sz=w1400" }
+    { id: "G7", title: "Bathukamma Floral Arrangement", category: "Bathukamma", alt: "Traditional floral decoration", image_url: "https://drive.google.com/thumbnail?id=1gUfD2rx6C06drLcvHq-Y4Ha0ZjXwJ4mT&sz=w1400" },
+    { id: "G8", title: "Women Celebrating Bathukamma", category: "Bathukamma", alt: "Colony women dancing around Bathukamma", image_url: "https://drive.google.com/thumbnail?id=1krjksVMxMTeZc80xxwzIji3dqIhe_pKy&sz=w1400" }
   ],
   committee: [
     { id: "C1", name: "R. Narayana Murthy", designation: "President", term: "2025–2027", public_contact: "president.wsn@gmail.com" },
@@ -1608,7 +1608,7 @@ const FIELDS = {
   ],
   gallery: [
     ["title", "Title", "text", 1],
-    ["category", "Category", "select:Bathukamma Celebrations,Festivals,Events,Community,Other"],
+    ["category", "Category", "select:Bathukamma,Deepavali,Ganesh Chaturthi,Festivals,Events,Community,Other"],
     ["alt", "Short photo description", "text"],
     ["image_url", "Photos (multiple allowed)", "up:image", 1]
   ],

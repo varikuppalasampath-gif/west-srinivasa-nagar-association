@@ -40,9 +40,9 @@ const MAIN_FESTIVALS_FOLDER_ID = '1Kq2lWakUlyD7Ni1mJctBx4S0FXMKgJjV';
 const INDIVIDUAL_FOLDERS = [
   {
     folderId: '1tpKpofdT3suiPOMNr_n-Rrs0xzrJLJba',
-    category: 'Bathukamma Celebrations',
-    defaultTitle: 'Bathukamma Celebration',
-    altText: 'Bathukamma festival celebration'
+    category: 'Bathukamma',
+    defaultTitle: 'Bathukamma',
+    altText: 'Bathukamma festival'
   }
 ];
 
@@ -59,22 +59,15 @@ function syncAllFestivalFolders() {
   const titleIdx = h.indexOf('title');
   const altIdx = h.indexOf('alt');
 
-  // Load existing URLs and normalize categories if needed
+  // Load existing URLs
   const data = sh.getLastRow() > 1
     ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length).getValues()
     : [];
 
   const existingUrls = [];
-  data.forEach((row, idx) => {
+  data.forEach((row) => {
     const u = String(row[urlIdx] || '').trim();
-    if (u) {
-      existingUrls.push(u);
-      const title = String(row[titleIdx] || '').toLowerCase();
-      const alt = String(row[altIdx] || '').toLowerCase();
-      if ((title.includes('bathukamma') || alt.includes('bathukamma')) && row[catIdx] !== 'Bathukamma Celebrations') {
-        sh.getRange(idx + 2, catIdx + 1).setValue('Bathukamma Celebrations');
-      }
-    }
+    if (u) existingUrls.push(u);
   });
 
   const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -150,12 +143,10 @@ function syncAllFestivalFolders() {
         const sub = subfolders.next();
         subfolderCount++;
         const folderName = sub.getName().trim();
-        // Add " Celebrations" if not already present in the folder name for a clean title
-        const cat = folderName.toLowerCase().includes('celebration') || folderName.toLowerCase().includes('program')
-          ? folderName
-          : folderName + ' Celebrations';
+        // Use the exact folder name as the category
+        const cat = folderName;
 
-        processFolder(sub, cat, folderName + ' Celebration');
+        processFolder(sub, cat, folderName);
       }
 
       // Also check files directly in the main folder
