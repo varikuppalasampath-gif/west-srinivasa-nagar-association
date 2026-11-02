@@ -235,6 +235,56 @@ function cleanAllCelebrationsFromGallerySheet() {
   Logger.log('Successfully cleaned "Celebrations" from ' + count + ' row(s) in Gallery sheet!');
 }
 
+/**
+ * Run this function in Apps Script to automatically populate all 18 official elected committee
+ * members (2025-2027) into your Google Sheet's Committee tab and clear the cache.
+ */
+function seedElectedCommittee() {
+  const sh = book().getSheetByName(T.committee);
+  if (!sh) throw new Error('Sheet "Committee" not found');
+
+  const headers = ['id', 'name', 'designation', 'term', 'public_contact', 'photo_url', 'status'];
+  
+  const officialMembers = [
+    // 1. President
+    ['C1', 'Srikanth Bezawada Garu', 'President', '2025–2027', 'president.wsn@gmail.com', '', 'published'],
+    // 2. Vice Presidents
+    ['C2', 'Kiran Reddy Garu', 'Vice President', '2025–2027', '', '', 'published'],
+    ['C3', 'Madhu Garu (NFC)', 'Vice President', '2025–2027', '', '', 'published'],
+    ['C4', 'Venkateswarlu Kakarla Garu', 'Vice President', '2025–2027', '', '', 'published'],
+    // 3. General Secretaries
+    ['C5', 'Shivakumar Sandesari Garu', 'General Secretary', '2025–2027', 'sec.wsn@gmail.com', '', 'published'],
+    ['C6', 'Santosh Garu (NFC)', 'General Secretary', '2025–2027', '', '', 'published'],
+    // 4. Joint Secretary
+    ['C7', 'Linga Naik Banoth Garu', 'Joint Secretary', '2025–2027', '', '', 'published'],
+    // 5. Treasurers
+    ['C8', 'Srinivasa Rao Janga Garu', 'Treasurer', '2025–2027', '', '', 'published'],
+    ['C9', 'Ramesh Garu', 'Treasurer', '2025–2027', '', '', 'published'],
+    // 6. Executive Members
+    ['C10', 'Balaraju Garu', 'Executive Member', '2025–2027', '', '', 'published'],
+    ['C11', 'Shiva Garu (Plot No. 263)', 'Executive Member', '2025–2027', '', '', 'published'],
+    ['C12', 'Somanna Garu', 'Executive Member', '2025–2027', '', '', 'published'],
+    ['C13', 'Srinivasulu Garu', 'Executive Member', '2025–2027', '', '', 'published'],
+    ['C14', 'Sathish Garu', 'Executive Member', '2025–2027', '', '', 'published'],
+    ['C15', 'Srinivasulu Janga Garu (Army)', 'Executive Member', '2025–2027', '', '', 'published'],
+    // 7. Advisers
+    ['C16', 'Satya Kishor Garu', 'Adviser', '2025–2027', '', '', 'published'],
+    ['C17', 'Narender Garu', 'Adviser', '2025–2027', '', '', 'published'],
+    ['C18', 'Vara Prasad Garu', 'Adviser', '2025–2027', '', '', 'published']
+  ];
+
+  // Reset sheet with headers and official rows
+  sh.clearContents();
+  sh.getRange(1, 1, 1, headers.length).setValues([headers]);
+  sh.getRange(2, 1, officialMembers.length, headers.length).setValues(officialMembers);
+
+  try {
+    CacheService.getScriptCache().removeAll(Object.keys(T).map(x => 'pub3_' + x));
+  } catch (e) {}
+
+  Logger.log('Successfully seeded 18 official committee members to Committee sheet and cleared cache!');
+}
+
 function readAll(name) {
   const sh = book().getSheetByName(name);
   if (!sh || sh.getLastRow() < 2) return [];

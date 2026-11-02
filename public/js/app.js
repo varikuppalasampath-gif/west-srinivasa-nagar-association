@@ -2,6 +2,41 @@
    West Srinivasa Nagar Association - Frontend Application
    ========================================================================== */
 
+/* ===== ELECTED ASSOCIATION BODY 2025–2027 (OFFICIAL 18 MEMBERS) ===== */
+const ELECTED_COMMITTEE_2025 = [
+  // 1. President
+  { id: "C1", name: "Srikanth Bezawada Garu", designation: "President", term: "2025–2027", role_group: "President", public_contact: "president.wsn@gmail.com" },
+  
+  // 2. Vice Presidents
+  { id: "C2", name: "Kiran Reddy Garu", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
+  { id: "C3", name: "Madhu Garu (NFC)", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
+  { id: "C4", name: "Venkateswarlu Kakarla Garu", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
+
+  // 3. General Secretaries
+  { id: "C5", name: "Shivakumar Sandesari Garu", designation: "General Secretary", term: "2025–2027", role_group: "General Secretaries", public_contact: "sec.wsn@gmail.com" },
+  { id: "C6", name: "Santosh Garu (NFC)", designation: "General Secretary", term: "2025–2027", role_group: "General Secretaries", public_contact: "" },
+
+  // 4. Joint Secretary
+  { id: "C7", name: "Linga Naik Banoth Garu", designation: "Joint Secretary", term: "2025–2027", role_group: "Joint Secretary", public_contact: "" },
+
+  // 5. Treasurers
+  { id: "C8", name: "Srinivasa Rao Janga Garu", designation: "Treasurer", term: "2025–2027", role_group: "Treasurers", public_contact: "" },
+  { id: "C9", name: "Ramesh Garu", designation: "Treasurer", term: "2025–2027", role_group: "Treasurers", public_contact: "" },
+
+  // 6. Executive Members
+  { id: "C10", name: "Balaraju Garu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+  { id: "C11", name: "Shiva Garu (Plot No. 263)", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+  { id: "C12", name: "Somanna Garu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+  { id: "C13", name: "Srinivasulu Garu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+  { id: "C14", name: "Sathish Garu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+  { id: "C15", name: "Srinivasulu Janga Garu (Army)", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+
+  // 7. Advisers
+  { id: "C16", name: "Satya Kishor Garu", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" },
+  { id: "C17", name: "Narender Garu", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" },
+  { id: "C18", name: "Vara Prasad Garu", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" }
+];
+
 /* ===== SAMPLE DATA (fictional; replaced automatically when API_URL is set) ===== */
 let DATA = {
   announcements: [
@@ -636,15 +671,19 @@ ${sampleBanner()}
 
   committee() {
     // 7 Official role groups from the newly elected body poster
-    const presidents = DATA.committee.filter(m => m.designation === "President");
-    const vps        = DATA.committee.filter(m => m.designation === "Vice President");
-    const genSecs    = DATA.committee.filter(m => m.designation === "General Secretary");
-    const jointSecs  = DATA.committee.filter(m => m.designation === "Joint Secretary");
-    const treasurers = DATA.committee.filter(m => m.designation === "Treasurer");
-    const execs      = DATA.committee.filter(m => m.designation === "Executive Member");
-    const advisers   = DATA.committee.filter(m => m.designation === "Adviser");
+    const committeeList = (DATA.committee && DATA.committee.length >= 18 && !DATA.committee.some(m => String(m.name || "").toLowerCase().includes("sample")))
+      ? DATA.committee
+      : ELECTED_COMMITTEE_2025;
 
-    const pres = presidents[0] || { name: "Srikanth Bezawada Garu", public_contact: "president.wsn@gmail.com" };
+    const presidents = committeeList.filter(m => m.designation === "President");
+    const vps        = committeeList.filter(m => m.designation === "Vice President");
+    const genSecs    = committeeList.filter(m => m.designation === "General Secretary");
+    const jointSecs  = committeeList.filter(m => m.designation === "Joint Secretary");
+    const treasurers = committeeList.filter(m => m.designation === "Treasurer");
+    const execs      = committeeList.filter(m => m.designation === "Executive Member");
+    const advisers   = committeeList.filter(m => m.designation === "Adviser");
+
+    const pres = presidents[0] || ELECTED_COMMITTEE_2025[0];
 
     return `
 <div class="page-header">
@@ -678,7 +717,7 @@ ${sampleBanner()}
 
     <div class="elected-badge-wrap">
       <div class="elected-medal" title="Total 18 Elected Members">
-        <span class="elected-medal-count">${DATA.committee.length || 18}</span>
+        <span class="elected-medal-count">${committeeList.length || 18}</span>
         <span class="elected-medal-label">Members</span>
       </div>
       <span style="font-size:12px;font-weight:700;color:#fde047;letter-spacing:0.5px">OFFICIAL BODY</span>
@@ -724,37 +763,22 @@ ${sampleBanner()}
 
     <div class="org-tree-spine"></div>
 
-    <!-- TIER 2: 7. Advisers (Left) & 2. Vice Presidents (Right) -->
+    <!-- TIER 2: 2. Vice Presidents (3 Members) -->
     <div class="org-level-row">
-      <!-- 7. Advisers -->
-      <div class="org-block org-block-adviser">
-        <div class="org-block-hdr">
-          <span>7. Advisers</span>
-          <span>🎓</span>
-        </div>
-        <div class="org-block-body">
-          ${advisers.map(m => `
-            <div class="org-m-item">
-              <span class="org-m-dot org-dot-adviser"></span>
-              <span>${esc(m.name)}</span>
-            </div>
-          `).join("")}
-        </div>
-      </div>
-
-      <!-- 2. Vice Presidents -->
       <div class="org-block org-block-vp">
         <div class="org-block-hdr">
-          <span>2. Vice Presidents</span>
+          <span>2. Vice Presidents (3)</span>
           <span>⭐</span>
         </div>
         <div class="org-block-body">
-          ${vps.map(m => `
-            <div class="org-m-item">
-              <span class="org-m-dot org-dot-vp"></span>
-              <span>${esc(m.name)}</span>
-            </div>
-          `).join("")}
+          <div class="org-exec-grid" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
+            ${vps.map(m => `
+              <div class="org-m-item">
+                <span class="org-m-dot org-dot-vp"></span>
+                <span>${esc(m.name)}</span>
+              </div>
+            `).join("")}
+          </div>
         </div>
       </div>
     </div>
@@ -814,7 +838,7 @@ ${sampleBanner()}
 
     <div class="org-tree-spine"></div>
 
-    <!-- TIER 4: 6. Executive Members -->
+    <!-- TIER 4: 6. Executive Members (6) -->
     <div class="org-level-row">
       <div class="org-block org-block-exec">
         <div class="org-block-hdr">
@@ -833,6 +857,28 @@ ${sampleBanner()}
         </div>
       </div>
     </div>
+
+    <div class="org-tree-spine"></div>
+
+    <!-- TIER 5: 7. Advisers (3) - BELOW Executive Members -->
+    <div class="org-level-row">
+      <div class="org-block org-block-adviser">
+        <div class="org-block-hdr">
+          <span>7. Advisers (3)</span>
+          <span>🎓</span>
+        </div>
+        <div class="org-block-body">
+          <div class="org-exec-grid" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
+            ${advisers.map(m => `
+              <div class="org-m-item">
+                <span class="org-m-dot org-dot-adviser"></span>
+                <span>${esc(m.name)}</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -840,7 +886,7 @@ ${sampleBanner()}
 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:36px 0 16px">
   <div>
     <h2 style="margin:0;font-size:1.3rem;color:var(--primary)">All Elected Committee Members</h2>
-    <p style="margin:4px 0 0;font-size:14px;color:var(--text-muted)">Directory of all 18 governing body members serving the colony</p>
+    <p style="margin:4px 0 0;font-size:14px;color:var(--text-muted)">Directory of all 18 governing body members serving the colony with their respective designations</p>
   </div>
   <span class="tag tag-notice" style="font-weight:700">18 Members</span>
 </div>
@@ -855,7 +901,7 @@ ${sampleBanner()}
 </div>
 
 <div class="grid" id="committee-grid">
-  ${DATA.committee.map(m => {
+  ${committeeList.map(m => {
     const initials = m.name.split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
     let badgeCls = "tag-notice";
     let group = "Executive Members";
@@ -1800,7 +1846,14 @@ async function init() {
       const r = await fetch(CONFIG.API_URL + "?action=all");
       const j = await r.json();
       if (j.success) {
-        DATA = { ...j.data, isSample: false };
+        // If live sheet committee data is empty, sample, or incomplete, retain official ELECTED_COMMITTEE_2025
+        const sheetComm = Array.isArray(j.data.committee) ? j.data.committee : [];
+        const isCommValid = sheetComm.length >= 18 && !sheetComm.some(m => String(m.name || "").toLowerCase().includes("sample"));
+        DATA = {
+          ...j.data,
+          committee: isCommValid ? sheetComm : ELECTED_COMMITTEE_2025,
+          isSample: false
+        };
       }
     } catch {
       main.innerHTML = `<div class="empty err">Unable to connect to live association database. Please refresh or try again later.</div>`;
