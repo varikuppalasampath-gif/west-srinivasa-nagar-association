@@ -861,7 +861,11 @@ ${sampleBanner()}
 <div class="grid" id="committee-grid">
   ${committeeList.map(m => {
     const displayName = cleanName(m.name);
-    const initials = displayName.split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+    const cleanWords = displayName.replace(/[()[\]{}.#]/g, " ").trim().split(/\s+/).filter(Boolean);
+    const initials = (cleanWords.length > 1
+      ? cleanWords[0][0] + cleanWords[1][0]
+      : (cleanWords[0] ? cleanWords[0].slice(0, 2) : "M")
+    ).toUpperCase();
     let badgeCls = "tag-notice";
     let group = "Executive Members";
     if (m.designation.includes("President")) { badgeCls = "tag-urgent"; group = "President & VPs"; }
