@@ -27,12 +27,37 @@ let DATA = {
     { id: "G8", title: "Women Celebrating Bathukamma", category: "Bathukamma", alt: "Colony women dancing around Bathukamma", image_url: "https://drive.google.com/thumbnail?id=1krjksVMxMTeZc80xxwzIji3dqIhe_pKy&sz=w1400" }
   ],
   committee: [
-    { id: "C1", name: "R. Narayana Murthy", designation: "President", term: "2025–2027", public_contact: "president.wsn@gmail.com" },
-    { id: "C2", name: "S. Venkateshwarlu", designation: "General Secretary", term: "2025–2027", public_contact: "sec.wsn@gmail.com" },
-    { id: "C3", name: "K. Ramesh Chandra", designation: "Treasurer", term: "2025–2027", public_contact: "" },
-    { id: "C4", name: "M. Anuradha", designation: "Joint Secretary", term: "2025–2027", public_contact: "" },
-    { id: "C5", name: "P. Rajesh", designation: "Executive Member (Infra)", term: "2025–2027", public_contact: "" },
-    { id: "C6", name: "V. Lakshmi", designation: "Executive Member (Security)", term: "2025–2027", public_contact: "" }
+    // 1. President
+    { id: "C1", name: "Srikanth Bezawada Garu", designation: "President", term: "2025–2027", role_group: "President", public_contact: "president.wsn@gmail.com" },
+    
+    // 2. Vice Presidents
+    { id: "C2", name: "Kiran Reddy Garu", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
+    { id: "C3", name: "Madhu Garu (NFC)", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
+    { id: "C4", name: "Venkateswarlu Kakarla Garu", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
+
+    // 3. General Secretaries
+    { id: "C5", name: "Shivakumar Sandesari Garu", designation: "General Secretary", term: "2025–2027", role_group: "General Secretaries", public_contact: "sec.wsn@gmail.com" },
+    { id: "C6", name: "Santosh Garu (NFC)", designation: "General Secretary", term: "2025–2027", role_group: "General Secretaries", public_contact: "" },
+
+    // 4. Joint Secretary
+    { id: "C7", name: "Linga Naik Banoth Garu", designation: "Joint Secretary", term: "2025–2027", role_group: "Joint Secretary", public_contact: "" },
+
+    // 5. Treasurers
+    { id: "C8", name: "Srinivasa Rao Janga Garu", designation: "Treasurer", term: "2025–2027", role_group: "Treasurers", public_contact: "" },
+    { id: "C9", name: "Ramesh Garu", designation: "Treasurer", term: "2025–2027", role_group: "Treasurers", public_contact: "" },
+
+    // 6. Executive Members
+    { id: "C10", name: "Balaraju Garu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+    { id: "C11", name: "Shiva Garu (Plot No. 263)", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+    { id: "C12", name: "Somanna Garu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+    { id: "C13", name: "Srinivasulu Garu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+    { id: "C14", name: "Sathish Garu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+    { id: "C15", name: "Srinivasulu Janga Garu (Army)", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+
+    // 7. Advisers
+    { id: "C16", name: "Satya Kishor Garu", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" },
+    { id: "C17", name: "Narender Garu", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" },
+    { id: "C18", name: "Vara Prasad Garu", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" }
   ],
   houses: (function() {
     // 4 GPS Boundary corners used for bilinear interpolation of all 40 colony plots
@@ -610,26 +635,16 @@ ${sampleBanner()}
   },
 
   committee() {
-    // Map members by designation for org-chart
-    const byDesig = {};
-    DATA.committee.forEach(m => { byDesig[m.designation] = m; });
-    const president  = byDesig["President"]                      || {};
-    const vp         = byDesig["Vice President"]                 || {};
-    const secretary  = byDesig["General Secretary"]              || {};
-    const treasurer  = byDesig["Treasurer"]                      || {};
-    const jSecretary = byDesig["Joint Secretary"]                || {};
-    const execInfra  = byDesig["Executive Member (Infra)"]       || {};
-    const execSec    = byDesig["Executive Member (Security)"]    || {};
+    // 7 Official role groups from the newly elected body poster
+    const presidents = DATA.committee.filter(m => m.designation === "President");
+    const vps        = DATA.committee.filter(m => m.designation === "Vice President");
+    const genSecs    = DATA.committee.filter(m => m.designation === "General Secretary");
+    const jointSecs  = DATA.committee.filter(m => m.designation === "Joint Secretary");
+    const treasurers = DATA.committee.filter(m => m.designation === "Treasurer");
+    const execs      = DATA.committee.filter(m => m.designation === "Executive Member");
+    const advisers   = DATA.committee.filter(m => m.designation === "Adviser");
 
-    // Collect "Members" tier: Joint Secretary + Executive Members
-    const members = [jSecretary, execInfra, execSec].filter(m => m.name);
-
-    const orgNode = (label, sublabel, contact) => `
-      <div class="org-node org-box">
-        <div class="org-node-role">${esc(label)}</div>
-        ${sublabel ? `<div class="org-node-name">${esc(sublabel)}</div>` : ""}
-        ${contact  ? `<a class="org-email" href="mailto:${esc(contact)}">${esc(contact)}</a>` : ""}
-      </div>`;
+    const pres = presidents[0] || { name: "Srikanth Bezawada Garu", public_contact: "president.wsn@gmail.com" };
 
     return `
 <div class="page-header">
@@ -639,58 +654,226 @@ ${sampleBanner()}
 
 ${sampleBanner()}
 
-<!-- ===== ORG CHART HIERARCHY ===== -->
-<div class="org-chart-section">
-  <h2 class="org-chart-title">Committee Hierarchy 2025–2027</h2>
+<!-- ===== NEWLY ELECTED BODY CONGRATULATIONS BANNER ===== -->
+<div class="elected-body-hero">
+  <div class="elected-hero-inner">
+    <div class="elected-hero-content">
+      <div class="elected-pill">
+        <span>⭐ NEWLY ELECTED ASSOCIATION BODY (2025–2027)</span>
+      </div>
+      <h2 class="elected-hero-title">West Srinivas Nagar Colony Association</h2>
+      <p class="elected-hero-sub">
+        Heartiest congratulations to all the elected members who have come forward to take responsibility and support our colony's development.
+      </p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button id="btn-view-poster" class="btn btn-sm btn-glass" style="font-weight:700" type="button">
+          📷 View Official Poster
+        </button>
+        <span style="font-size:13px;opacity:0.9;font-weight:600">🤝 Together for a Better Colony</span>
+      </div>
+      <div class="elected-telugu-quote">
+        <b>నాయకత్వ సందేశం:</b> "వెస్ట్ శ్రీనివాస్ నగర్ కాలనీ నూతన అసోసియేషన్ బాడీ సభ్యులకు హృదయపూర్వక అభినందనలు! మన కాలనీ అభివృద్ధి కోసం ఐకమత్యం, నిబద్ధత మరియు పరస్పర సహకారంతో కలిసి పనిచేద్దాం." 🙏
+      </div>
+    </div>
 
-  <!-- Level 1: President -->
-  <div class="org-level org-level-1">
-    ${orgNode("President", president.name || "", president.public_contact || "")}
-  </div>
-
-  <!-- Vertical connector: President → VP -->
-  <div class="org-v-line"></div>
-
-  <!-- Level 2: Vice President -->
-  <div class="org-level org-level-2">
-    ${orgNode("Vice President", vp.name || "Position Vacant", vp.public_contact || "")}
-  </div>
-
-  <!-- VP → 3-branch connector -->
-  <div class="org-v-line"></div>
-  <div class="org-branch-wrap">
-    <div class="org-branch-h"></div>
-    <div class="org-branch-drop org-branch-drop-l"></div>
-    <div class="org-branch-drop org-branch-drop-c"></div>
-    <div class="org-branch-drop org-branch-drop-r"></div>
-  </div>
-
-  <!-- Level 3: Secretary | Treasurer | Members -->
-  <div class="org-level org-level-3">
-    ${orgNode("Secretary", secretary.name || "", secretary.public_contact || "")}
-    ${orgNode("Treasurer", treasurer.name || "", treasurer.public_contact || "")}
-    <div class="org-node org-box org-members-box">
-      <div class="org-node-role">Members</div>
-      ${members.map(m => `<div class="org-member-item">${esc(m.name)} <span class="org-member-desig">(${esc(m.designation)})</span></div>`).join("")}
+    <div class="elected-badge-wrap">
+      <div class="elected-medal" title="Total 18 Elected Members">
+        <span class="elected-medal-count">${DATA.committee.length || 18}</span>
+        <span class="elected-medal-label">Members</span>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:#fde047;letter-spacing:0.5px">OFFICIAL BODY</span>
     </div>
   </div>
 </div>
 
-<!-- ===== MEMBER CARDS GRID ===== -->
-<h2 style="margin:32px 0 16px;font-size:1.15rem;color:var(--primary)">All Committee Members</h2>
-<div class="grid">
+<!-- Modal for Official Announcement Poster -->
+<div id="poster-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:999999;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)">
+  <div style="position:relative;max-width:720px;width:100%;background:#0b1329;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.2)">
+    <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#071b30 0%,#0f3d68 100%);color:#fff">
+      <div style="font-weight:800;font-size:15px">Newly Elected Association Body Poster</div>
+      <button id="close-poster-modal" style="background:transparent;border:none;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:4px 8px" aria-label="Close poster">&times;</button>
+    </div>
+    <div style="padding:12px;text-align:center;max-height:80vh;overflow-y:auto;background:#030712">
+      <img src="images/elected-body-2025.jpg" alt="Newly Elected West Srinivas Nagar Colony Association Body Poster" style="width:100%;max-height:74vh;object-fit:contain;border-radius:10px;display:block;margin:0 auto">
+    </div>
+  </div>
+</div>
+
+<!-- ===== OFFICIAL 7-BLOCK HIERARCHY CHART ===== -->
+<div class="org-chart-section">
+  <h2 class="org-chart-title">Association Body Hierarchy 2025–2027</h2>
+  <p class="org-chart-subtitle">Official 7-tier organizational structure of the elected representatives</p>
+
+  <div class="org-hierarchy-container">
+    <!-- TIER 1: 1. President -->
+    <div class="org-level-row">
+      <div class="org-block org-block-president">
+        <div class="org-block-hdr">
+          <span>1. President</span>
+          <span>👑</span>
+        </div>
+        <div class="org-block-body">
+          <div class="org-m-item" style="font-size:16px">
+            <span class="org-m-dot org-dot-president"></span>
+            <span>${esc(pres.name)}</span>
+          </div>
+          ${pres.public_contact ? `<a class="org-email" style="color:var(--primary);text-decoration:underline;font-size:12px" href="mailto:${esc(pres.public_contact)}">${esc(pres.public_contact)}</a>` : ""}
+        </div>
+      </div>
+    </div>
+
+    <div class="org-tree-spine"></div>
+
+    <!-- TIER 2: 7. Advisers (Left) & 2. Vice Presidents (Right) -->
+    <div class="org-level-row">
+      <!-- 7. Advisers -->
+      <div class="org-block org-block-adviser">
+        <div class="org-block-hdr">
+          <span>7. Advisers</span>
+          <span>🎓</span>
+        </div>
+        <div class="org-block-body">
+          ${advisers.map(m => `
+            <div class="org-m-item">
+              <span class="org-m-dot org-dot-adviser"></span>
+              <span>${esc(m.name)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <!-- 2. Vice Presidents -->
+      <div class="org-block org-block-vp">
+        <div class="org-block-hdr">
+          <span>2. Vice Presidents</span>
+          <span>⭐</span>
+        </div>
+        <div class="org-block-body">
+          ${vps.map(m => `
+            <div class="org-m-item">
+              <span class="org-m-dot org-dot-vp"></span>
+              <span>${esc(m.name)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+
+    <div class="org-tree-spine"></div>
+
+    <!-- TIER 3: Secretariat & Treasury -->
+    <div class="org-level-row">
+      <!-- 3. General Secretaries -->
+      <div class="org-block org-block-gensec">
+        <div class="org-block-hdr">
+          <span>3. General Secretaries</span>
+          <span>📜</span>
+        </div>
+        <div class="org-block-body">
+          ${genSecs.map(m => `
+            <div class="org-m-item">
+              <span class="org-m-dot org-dot-gensec"></span>
+              <span>${esc(m.name)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <!-- 4. Joint Secretary -->
+      <div class="org-block org-block-jointsec">
+        <div class="org-block-hdr">
+          <span>4. Joint Secretary</span>
+          <span>🤝</span>
+        </div>
+        <div class="org-block-body">
+          ${jointSecs.map(m => `
+            <div class="org-m-item">
+              <span class="org-m-dot org-dot-jointsec"></span>
+              <span>${esc(m.name)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <!-- 5. Treasurers -->
+      <div class="org-block org-block-treasurer">
+        <div class="org-block-hdr">
+          <span>5. Treasurers</span>
+          <span>💰</span>
+        </div>
+        <div class="org-block-body">
+          ${treasurers.map(m => `
+            <div class="org-m-item">
+              <span class="org-m-dot org-dot-treasurer"></span>
+              <span>${esc(m.name)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+
+    <div class="org-tree-spine"></div>
+
+    <!-- TIER 4: 6. Executive Members -->
+    <div class="org-level-row">
+      <div class="org-block org-block-exec">
+        <div class="org-block-hdr">
+          <span>6. Executive Members (6)</span>
+          <span>🛡️</span>
+        </div>
+        <div class="org-block-body">
+          <div class="org-exec-grid">
+            ${execs.map(m => `
+              <div class="org-m-item">
+                <span class="org-m-dot org-dot-exec"></span>
+                <span>${esc(m.name)}</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ALL 18 COMMITTEE MEMBERS DIRECTORY ===== -->
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:36px 0 16px">
+  <div>
+    <h2 style="margin:0;font-size:1.3rem;color:var(--primary)">All Elected Committee Members</h2>
+    <p style="margin:4px 0 0;font-size:14px;color:var(--text-muted)">Directory of all 18 governing body members serving the colony</p>
+  </div>
+  <span class="tag tag-notice" style="font-weight:700">18 Members</span>
+</div>
+
+<div class="tabs" id="committee-filter-tabs" style="margin-bottom:20px">
+  <button class="active" data-group="all" type="button">All (18)</button>
+  <button data-group="President & VPs" type="button">President & VPs (4)</button>
+  <button data-group="Secretaries" type="button">Secretaries (3)</button>
+  <button data-group="Treasurers" type="button">Treasurers (2)</button>
+  <button data-group="Executive Members" type="button">Executive Members (6)</button>
+  <button data-group="Advisers" type="button">Advisers (3)</button>
+</div>
+
+<div class="grid" id="committee-grid">
   ${DATA.committee.map(m => {
-    const initials = m.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    const initials = m.name.split(" ").filter(Boolean).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+    let badgeCls = "tag-notice";
+    let group = "Executive Members";
+    if (m.designation.includes("President")) { badgeCls = "tag-urgent"; group = "President & VPs"; }
+    else if (m.designation.includes("Secretary")) { badgeCls = "tag-meeting"; group = "Secretaries"; }
+    else if (m.designation.includes("Treasurer")) { badgeCls = "tag-notice"; group = "Treasurers"; }
+    else if (m.designation.includes("Adviser")) { badgeCls = "tag-notice"; group = "Advisers"; }
+
     return `
-    <div class="card committee-card">
+    <div class="card committee-card" data-group="${esc(group)}">
       <div class="avatar-wrap">
         ${m.photo_url
           ? `<img src="${url(m.photo_url)}" alt="Photo of ${esc(m.name)}" loading="lazy">`
           : `<span>${initials}</span>`}
       </div>
-      <h3 class="committee-name">${esc(m.name)}</h3>
-      <span class="tag tag-notice">${esc(m.designation)}</span>
-      <p class="committee-term">Tenure: ${esc(m.term || "2025–2027")}</p>
+      <h3 class="committee-name" style="font-size:16px">${esc(m.name)}</h3>
+      <span class="tag ${badgeCls}" style="margin-bottom:6px">${esc(m.designation)}</span>
+      <p class="committee-term" style="margin:0;font-size:13px">Tenure: ${esc(m.term || "2025–2027")}</p>
       ${m.public_contact ? `
         <div style="margin-top:10px">
           <a class="btn btn-sm btn-outline" href="mailto:${esc(m.public_contact)}">
@@ -1272,6 +1455,43 @@ function initLeafletColonyMap() {
   setTimeout(() => { map.invalidateSize(); }, 500);
 }
 
+function bindCommittee() {
+  // Modal for viewing official poster
+  const posterModal = $("#poster-modal");
+  const btnPoster = $("#btn-view-poster");
+  const closePoster = $("#close-poster-modal");
+  if (btnPoster && posterModal) {
+    btnPoster.onclick = () => { posterModal.style.display = "flex"; };
+  }
+  if (closePoster && posterModal) {
+    closePoster.onclick = () => { posterModal.style.display = "none"; };
+  }
+  if (posterModal) {
+    posterModal.onclick = (e) => {
+      if (e.target === posterModal) posterModal.style.display = "none";
+    };
+  }
+
+  // Filter tabs for the 18 committee member cards
+  const tabs = $$("#committee-filter-tabs button");
+  const cards = $$("#committee-grid .committee-card");
+  tabs.forEach(tab => {
+    tab.onclick = () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const group = tab.getAttribute("data-group");
+      cards.forEach(card => {
+        const cardGroup = card.getAttribute("data-group");
+        if (group === "all" || cardGroup === group) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    };
+  });
+}
+
 function bindMap() {
   // Initialize Real Leaflet Interactive GPS Map
   initLeafletColonyMap();
@@ -1485,6 +1705,7 @@ function route() {
   $("#menu").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
 
   // View-specific bindings
+  if (v === "committee") bindCommittee();
   if (v === "map") bindMap();
   if (v === "contact") bindContact();
   if (v === "announcements") bindAnnouncements();

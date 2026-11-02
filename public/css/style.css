@@ -180,7 +180,11 @@ body {
 }
 
 /* Prevent images, videos, iframes from blowing out layout */
-img, video, iframe, svg, canvas {
+img,
+video,
+iframe,
+svg,
+canvas {
   max-width: 100%;
   height: auto;
 }
@@ -1185,8 +1189,128 @@ svg.map {
 }
 
 /* ==========================================================================
-   Committee Org-Chart Hierarchy
+   Newly Elected Body Celebration & Hierarchy
    ========================================================================== */
+.elected-body-hero {
+  background: linear-gradient(135deg, #072a4d 0%, #0f3d68 50%, #0d9488 100%);
+  color: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: 32px 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 30px rgba(15, 61, 104, 0.25);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.elected-body-hero::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.elected-hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.elected-hero-content {
+  flex: 1;
+  min-width: 280px;
+}
+
+.elected-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fbbf24;
+  margin-bottom: 12px;
+}
+
+.elected-hero-title {
+  font-size: clamp(22px, 3.8vw, 32px);
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.elected-hero-sub {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.elected-telugu-quote {
+  background: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #f59e0b;
+  padding: 10px 16px;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.elected-badge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.elected-medal {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #b45309 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #78350f;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+  border: 4px solid #ffffff;
+  position: relative;
+}
+
+.elected-medal-count {
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  color: #b91c1c;
+}
+
+.elected-medal-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #1e3a8a;
+  margin-top: 2px;
+}
+
+/* Hierarchy Section */
 .org-chart-section {
   background: var(--card);
   border-radius: 18px;
@@ -1198,160 +1322,219 @@ svg.map {
 
 .org-chart-title {
   text-align: center;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 800;
   color: var(--primary);
-  margin: 0 0 28px;
+  margin: 0 0 8px;
   letter-spacing: -0.3px;
 }
 
-/* Each horizontal row of nodes */
-.org-level {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 24px;
+.org-chart-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 0 28px;
 }
 
-/* ---- All boxes: uniform blue like the image ---- */
-.org-box {
-  background: #4472C4;
-  border-radius: 10px;
-  padding: 14px 22px;
-  min-width: 140px;
-  max-width: 200px;
-  text-align: center;
-  color: #fff;
+.org-hierarchy-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  gap: 0;
+  width: 100%;
 }
 
-.org-level-1 .org-box {
-  min-width: 160px;
-  padding: 16px 28px;
-  font-size: 1.05rem;
+.org-level-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
-.org-level-2 .org-box {
-  min-width: 150px;
-  padding: 15px 24px;
+.org-block {
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
 }
 
-.org-level-3 .org-box {
-  min-width: 130px;
-  padding: 13px 16px;
-  font-size: 0.88rem;
+.org-block:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
 }
 
-.org-node-role {
+.org-block-hdr {
+  padding: 10px 16px;
+  font-weight: 800;
+  font-size: 13.5px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  letter-spacing: 0.3px;
+}
+
+.org-block-body {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* 7 Distinct Block Colors from Poster */
+.org-block-president {
+  border-color: #0284c7;
+  max-width: 380px;
+  width: 100%;
+}
+
+.org-block-president .org-block-hdr {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+}
+
+.org-block-vp {
+  border-color: #16a34a;
+  flex: 1.2;
+  min-width: 270px;
+  max-width: 420px;
+}
+
+.org-block-vp .org-block-hdr {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+
+.org-block-adviser {
+  border-color: #7c3aed;
+  flex: 1;
+  min-width: 260px;
+  max-width: 360px;
+}
+
+.org-block-adviser .org-block-hdr {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.org-block-gensec {
+  border-color: #9333ea;
+  flex: 1.1;
+  min-width: 250px;
+  max-width: 340px;
+}
+
+.org-block-gensec .org-block-hdr {
+  background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
+}
+
+.org-block-jointsec {
+  border-color: #0d9488;
+  flex: 0.9;
+  min-width: 230px;
+  max-width: 300px;
+}
+
+.org-block-jointsec .org-block-hdr {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+}
+
+.org-block-treasurer {
+  border-color: #e11d48;
+  flex: 1;
+  min-width: 240px;
+  max-width: 320px;
+}
+
+.org-block-treasurer .org-block-hdr {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+}
+
+.org-block-exec {
+  border-color: #2563eb;
+  width: 100%;
+  max-width: 920px;
+}
+
+.org-block-exec .org-block-hdr {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+/* Member item row */
+.org-m-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14.5px;
   font-weight: 700;
-  font-size: 1em;
-  line-height: 1.3;
+  color: var(--text);
+  line-height: 1.35;
 }
 
-.org-node-name {
-  font-size: 0.75em;
-  opacity: 0.88;
-  font-weight: 500;
-  line-height: 1.3;
+.org-m-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.org-email {
-  font-size: 0.65em;
-  color: rgba(255, 255, 255, 0.82);
-  text-decoration: underline;
-  margin-top: 4px;
-  word-break: break-all;
+.org-dot-president {
+  background: #0284c7;
 }
 
-/* Members box — list of names inside */
-.org-members-box {
-  max-width: 200px;
+.org-dot-vp {
+  background: #16a34a;
 }
 
-.org-member-item {
-  font-size: 0.72em;
-  opacity: 0.9;
-  margin-top: 3px;
-  line-height: 1.3;
+.org-dot-adviser {
+  background: #7c3aed;
 }
 
-.org-member-desig {
-  opacity: 0.7;
-  font-style: italic;
+.org-dot-gensec {
+  background: #9333ea;
 }
 
-/* ---- Connector lines (same grey as image) ---- */
-.org-v-line {
+.org-dot-jointsec {
+  background: #0d9488;
+}
+
+.org-dot-treasurer {
+  background: #e11d48;
+}
+
+.org-dot-exec {
+  background: #2563eb;
+}
+
+/* Grid of members for Executive block */
+.org-exec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px 20px;
+}
+
+/* Connector lines */
+.org-tree-spine {
   width: 2px;
-  height: 30px;
-  background: #8EA9C1;
+  height: 28px;
+  background: #94a3b8;
   margin: 0 auto;
 }
 
-/* Gap between levels */
-.org-level-2 {
-  margin-top: 0;
-}
-
-.org-level-3 {
-  margin-top: 0;
-  gap: 20px;
-}
-
-/* Branch connector: VP → 3 children */
-.org-branch-wrap {
-  position: relative;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-}
-
-/* Horizontal bar */
-.org-branch-h {
-  position: absolute;
-  top: 0;
-  left: calc(50% - 104px);
-  width: 208px;
-  height: 2px;
-  background: #8EA9C1;
-}
-
-/* Three vertical drops */
-.org-branch-drop {
-  position: absolute;
-  top: 0;
-  width: 2px;
-  background: #8EA9C1;
-  height: 30px;
-}
-
-.org-branch-drop-l {
-  left: calc(50% - 104px);
-}
-
-.org-branch-drop-c {
-  left: calc(50% - 1px);
-}
-
-.org-branch-drop-r {
-  left: calc(50% + 102px);
-}
-
-/* Dark mode connector tint */
+/* Dark mode adjustment */
 @media (prefers-color-scheme: dark) {
-
-  .org-v-line,
-  .org-branch-h,
-  .org-branch-drop {
-    background: #5b84a8;
+  .org-tree-spine {
+    background: #475569;
   }
 
-  .org-box {
-    background: #3a5f9e;
+  .org-block {
+    background: var(--card);
   }
 }
 
@@ -1991,9 +2174,11 @@ footer {
   main {
     padding: 40px 32px 80px;
   }
+
   .hero {
     padding: clamp(48px, 6vw, 72px);
   }
+
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
   }
@@ -2004,41 +2189,62 @@ footer {
   main {
     padding: 24px 18px 56px;
   }
+
   .hero {
     padding: clamp(28px, 5vw, 48px);
     border-radius: var(--radius-lg);
   }
+
   .stats {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     max-width: 100%;
   }
+
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 16px;
   }
+
   /* Contact layout single column on tablet */
   .contact-layout {
     grid-template-columns: 1fr;
   }
+
   /* Map height reduction on tablet */
   #leaflet-map {
     height: 380px !important;
   }
+
   /* Org-chart spine adjusts for narrower screen */
   .org-branch-h {
     left: calc(50% - 90px);
     width: 180px;
   }
-  .org-branch-drop-l { left: calc(50% - 90px); }
-  .org-branch-drop-r { left: calc(50% + 88px); }
+
+  .org-branch-drop-l {
+    left: calc(50% - 90px);
+  }
+
+  .org-branch-drop-r {
+    left: calc(50% + 88px);
+  }
 }
 
 /* ---- Mobile landscape & large phones (481px – 767px) ---- */
 @media (max-width: 767px) {
+
   /* Typography scale down */
-  h1 { font-size: clamp(22px, 6vw, 30px); }
-  h2 { font-size: clamp(18px, 5vw, 24px); }
-  h3 { font-size: clamp(15px, 4vw, 18px); }
+  h1 {
+    font-size: clamp(22px, 6vw, 30px);
+  }
+
+  h2 {
+    font-size: clamp(18px, 5vw, 24px);
+  }
+
+  h3 {
+    font-size: clamp(15px, 4vw, 18px);
+  }
 
   main {
     padding: 18px 14px 48px;
@@ -2050,21 +2256,43 @@ footer {
     border-radius: var(--radius-lg);
     margin-bottom: 28px;
   }
-  .hero h1 { font-size: clamp(22px, 6.5vw, 32px); }
-  .hero p  { font-size: 15px; margin-bottom: 20px; }
+
+  .hero h1 {
+    font-size: clamp(22px, 6.5vw, 32px);
+  }
+
+  .hero p {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
   .hero-actions {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  .hero-actions .btn { width: 100%; justify-content: center; }
+
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .stats {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
-  .stat { padding: 12px 10px; }
-  .stat b { font-size: clamp(20px, 6vw, 28px); }
-  .stat span { font-size: 11px; }
+
+  .stat {
+    padding: 12px 10px;
+  }
+
+  .stat b {
+    font-size: clamp(20px, 6vw, 28px);
+  }
+
+  .stat span {
+    font-size: 11px;
+  }
 
   /* Cards grid — 1 column on small screens, 2 if wide enough */
   .grid {
@@ -2073,24 +2301,42 @@ footer {
   }
 
   /* Page header */
-  .page-header { margin-bottom: 20px; }
-  .page-header p { font-size: 14.5px; }
+  .page-header {
+    margin-bottom: 20px;
+  }
+
+  .page-header p {
+    font-size: 14.5px;
+  }
 
   /* Tabs wrap & shrink */
-  .tabs { gap: 6px; margin: 12px 0 18px; }
-  .tabs button, .tabs a {
+  .tabs {
+    gap: 6px;
+    margin: 12px 0 18px;
+  }
+
+  .tabs button,
+  .tabs a {
     padding: 7px 14px;
     font-size: 13px;
     min-height: 36px;
   }
 
   /* Search bar full width */
-  .search-bar { max-width: 100%; }
-  .search-bar input { font-size: 14px; }
+  .search-bar {
+    max-width: 100%;
+  }
+
+  .search-bar input {
+    font-size: 14px;
+  }
 
   /* Map page */
-  #leaflet-map { height: 320px !important; }
-  .map-coords-panel > div:first-child {
+  #leaflet-map {
+    height: 320px !important;
+  }
+
+  .map-coords-panel>div:first-child {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
@@ -2101,43 +2347,70 @@ footer {
     flex-direction: column;
     align-items: flex-start !important;
   }
-  .map-card-header > div:last-child {
+
+  .map-card-header>div:last-child {
     width: 100%;
     display: flex;
     gap: 8px;
   }
-  .map-card-header > div:last-child button {
+
+  .map-card-header>div:last-child button {
     flex: 1;
     font-size: 11px !important;
     padding: 5px 8px !important;
   }
 
-  /* Org chart — compact for mobile */
-  .org-chart-section { padding: 20px 12px 20px; }
-  .org-level { gap: 10px; }
-  .org-box {
-    min-width: 90px !important;
-    max-width: 140px !important;
-    padding: 10px 10px !important;
-    border-radius: 8px;
+  /* Org chart & Elected Body — mobile */
+  .org-chart-section {
+    padding: 22px 14px;
   }
-  .org-level-1 .org-box { min-width: 110px !important; padding: 12px 14px !important; }
-  .org-node-role  { font-size: 0.82em; }
-  .org-node-name  { font-size: 0.68em; }
-  .org-branch-h {
-    left: calc(50% - 68px);
-    width: 136px;
+
+  .org-level-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
-  .org-branch-drop-l { left: calc(50% - 68px); }
-  .org-branch-drop-r { left: calc(50% + 66px); }
-  .org-v-line    { height: 22px; }
-  .org-branch-wrap { height: 22px; }
-  .org-branch-drop { height: 22px; }
-  .org-level-3 { gap: 8px; }
+
+  .org-block {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .org-tree-spine {
+    height: 18px;
+  }
+
+  .org-exec-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .elected-body-hero {
+    padding: 24px 18px;
+  }
+
+  .elected-hero-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .elected-badge-wrap {
+    align-self: center;
+    margin-top: 6px;
+  }
 
   /* Committee member cards — 1 per row on phones */
-  .committee-card { padding: 20px 16px; }
-  .avatar-wrap { width: 80px; height: 80px; font-size: 22px; }
+  .committee-card {
+    padding: 20px 16px;
+  }
+
+  .avatar-wrap {
+    width: 80px;
+    height: 80px;
+    font-size: 22px;
+  }
 
   /* Gallery grid */
   .gal-grid {
@@ -2146,8 +2419,13 @@ footer {
   }
 
   /* Events & announcements */
-  .card { padding: 18px 16px; }
-  .cimg { height: 160px; }
+  .card {
+    padding: 18px 16px;
+  }
+
+  .cimg {
+    height: 160px;
+  }
 
   /* Back to top button — smaller */
   #back-top {
@@ -2162,6 +2440,7 @@ footer {
     grid-template-columns: 1fr;
     gap: 24px;
   }
+
   .footer-bottom {
     flex-direction: column;
     text-align: center;
@@ -2169,26 +2448,59 @@ footer {
   }
 
   /* Admin table scroll */
-  .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { min-width: 600px; }
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 600px;
+  }
 
   /* Bylaws accordion */
-  details summary { font-size: 14.5px; padding: 14px 16px; }
+  details summary {
+    font-size: 14.5px;
+    padding: 14px 16px;
+  }
 }
 
 /* ---- Small phones only (< 481px) ---- */
 @media (max-width: 480px) {
-  main { padding: 14px 10px 40px; }
+  main {
+    padding: 14px 10px 40px;
+  }
 
-  .hero { padding: 22px 14px 26px; margin-bottom: 22px; }
-  .hero h1 { font-size: clamp(20px, 7vw, 26px); }
-  .hero-pill { font-size: 11px; padding: 5px 10px; }
+  .hero {
+    padding: 22px 14px 26px;
+    margin-bottom: 22px;
+  }
+
+  .hero h1 {
+    font-size: clamp(20px, 7vw, 26px);
+  }
+
+  .hero-pill {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
 
   /* Stats: 3 columns even on very small screens */
-  .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .stat { padding: 10px 6px; }
-  .stat b { font-size: 22px; }
-  .stat span { font-size: 10px; }
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 10px 6px;
+  }
+
+  .stat b {
+    font-size: 22px;
+  }
+
+  .stat span {
+    font-size: 10px;
+  }
 
   /* Full-width grid on tiny phones */
   .grid {
@@ -2203,41 +2515,60 @@ footer {
     -webkit-overflow-scrolling: touch;
     padding-bottom: 4px;
   }
-  .tabs button, .tabs a {
+
+  .tabs button,
+  .tabs a {
     white-space: nowrap;
     flex-shrink: 0;
   }
 
-  /* Org chart — stack vertically on very small phones */
-  .org-level { gap: 6px; }
-  .org-box {
-    min-width: 80px !important;
-    max-width: 110px !important;
-    padding: 8px 6px !important;
-    font-size: 0.78rem;
+  /* Org chart on small phones */
+  .org-chart-section {
+    padding: 18px 10px;
   }
-  .org-level-1 .org-box { min-width: 100px !important; }
-  .org-node-role { font-size: 0.75em; }
-  .org-node-name { font-size: 0.62em; }
-  .org-branch-h {
-    left: calc(50% - 55px);
-    width: 110px;
+  .org-block-hdr {
+    font-size: 12.5px;
+    padding: 8px 12px;
   }
-  .org-branch-drop-l { left: calc(50% - 55px); }
-  .org-branch-drop-r { left: calc(50% + 53px); }
-  .org-member-item { font-size: 0.62em; }
+  .org-block-body {
+    padding: 10px 14px;
+    gap: 6px;
+  }
+  .org-m-item {
+    font-size: 13.5px;
+  }
 
   /* Map */
-  #leaflet-map { height: 260px !important; }
+  #leaflet-map {
+    height: 260px !important;
+  }
 
   /* Buttons full width in forms */
-  form .btn[type="submit"] { width: 100%; }
+  form .btn[type="submit"] {
+    width: 100%;
+  }
 
   /* Header brand text */
-  .brand { gap: 10px; }
-  .brand-icon { width: 36px; height: 36px; border-radius: 10px; }
-  .brand-icon svg { width: 18px; height: 18px; }
-  .brand-title { font-size: 14px !important; line-height: 1.15; }
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .brand-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .brand-title {
+    font-size: 14px !important;
+    line-height: 1.15;
+  }
+
   .brand-sub {
     display: block !important;
     font-size: 9.5px !important;
@@ -2248,6 +2579,7 @@ footer {
 
 /* ---- Touch devices: remove hover transforms (prevents stuck states) ---- */
 @media (hover: none) {
+
   .card.lift:hover,
   a.card:hover,
   .gal-card:hover,
@@ -2260,7 +2592,10 @@ footer {
 
 /* ---- Reduce motion: respect OS setting ---- */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
