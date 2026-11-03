@@ -619,17 +619,9 @@ ${sampleBanner()}
     const filtered = pool.filter(g => f === "All" || g.category.toLowerCase() === f.toLowerCase());
 
     return `
-<div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px">
-  <div>
-    <h1>Community Photo Gallery</h1>
-    <p>Memories and moments from our colony festivals, community celebrations, and welfare drives.</p>
-  </div>
-  ${CONFIG.API_URL ? `
-    <button id="btn-sync-gallery" class="btn btn-sm btn-outline" style="display:inline-flex;align-items:center;gap:6px;font-weight:600" type="button" title="Synchronize latest photos and remove deleted ones from Google Drive">
-      <span id="sync-icon" style="display:inline-block">🔄</span>
-      <span id="sync-label">Sync Drive Photos</span>
-    </button>
-  ` : ""}
+<div class="page-header">
+  <h1>Community Photo Gallery</h1>
+  <p>Memories and moments from our colony festivals, community celebrations, and welfare drives.</p>
 </div>
 
 ${sampleBanner()}
@@ -1493,37 +1485,35 @@ function bindCommittee() {
   });
 }
 
-function bindGallery() {
-  const btn = $("#btn-sync-gallery");
-  if (btn && CONFIG.API_URL) {
-    btn.onclick = async () => {
-      const icon = $("#sync-icon");
-      const lbl = $("#sync-label");
-      if (lbl) lbl.textContent = "Syncing with Drive...";
-      if (icon) icon.style.animation = "spin 1s linear infinite";
-      btn.style.opacity = "0.7";
-      btn.disabled = true;
+let _gallerySyncActive = false;
+let _lastGallerySync = 0;
 
-      try {
-        const r = await fetch(CONFIG.API_URL + "?action=sync");
-        const j = await r.json();
-        if (j.success && Array.isArray(j.data)) {
-          DATA.gallery = j.data;
-          toast("Drive synced! " + j.data.length + " media item(s) loaded.");
-          route();
-        } else {
-          toast("Drive sync completed.");
-          route();
-        }
-      } catch (err) {
-        toast("Unable to sync right now. Please refresh the page.");
-      } finally {
-        if (lbl) lbl.textContent = "Sync Drive Photos";
-        if (icon) icon.style.animation = "";
-        btn.style.opacity = "1";
-        btn.disabled = false;
+async function bindGallery() {
+  if (!CONFIG.API_URL) return;
+
+  // Auto-fetch Drive folders & photos whenever gallery is opened (throttle 10s between rapid clicks)
+  const now = Date.now();
+  if (_gallerySyncActive || (now - _lastGallerySync < 10000)) return;
+
+  _gallerySyncActive = true;
+  try {
+    const r = await fetch(CONFIG.API_URL + "?action=gallery&sync=1&t=" + now);
+    const j = await r.json();
+    if (j.success && Array.isArray(j.data)) {
+      const prevIds = (DATA.gallery || []).map(g => g.id).join(",");
+      const newIds = j.data.map(g => g.id).join(",");
+      DATA.gallery = j.data;
+      _lastGallerySync = Date.now();
+
+      // If photos were added or deleted in Drive, automatically re-render the gallery view
+      if (prevIds !== newIds && location.hash.startsWith("#gallery")) {
+        route();
       }
-    };
+    }
+  } catch (err) {
+    console.warn("Auto-fetch gallery warning:", err);
+  } finally {
+    _gallerySyncActive = false;
   }
 }
 

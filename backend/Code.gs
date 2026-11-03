@@ -392,22 +392,20 @@ function maybeAutoSyncDrive(force) {
 function doGet(e) {
   try {
     const a = (e && e.parameter && e.parameter.action) || 'all';
-    const force = Boolean(
-      a === 'sync' || 
-      (e && e.parameter && (e.parameter.sync === '1' || e.parameter.refresh === '1' || e.parameter.force === '1'))
-    );
     
-    // Scan Drive whenever gallery, all, or sync is requested
-    if (a === 'gallery' || a === 'all' || a === 'sync') {
-      maybeAutoSyncDrive(force);
+    // Whenever gallery or sync is requested, always perform an immediate live sync with Google Drive
+    if (a === 'gallery' || a === 'sync') {
+      maybeAutoSyncDrive(true); // Force live scan: removes deleted Drive photos & adds new Drive photos
+      return out(true, 'OK', readPublic('gallery'));
     }
     
-    // Dedicated instant sync endpoint that returns fresh gallery data
-    if (a === 'sync') {
-      return out(true, 'Gallery synced successfully with Google Drive', readPublic('gallery'));
+    if (a === 'all') {
+      maybeAutoSyncDrive(false);
+      const d = {};
+      Object.keys(T).forEach(k => d[k] = readPublic(k));
+      return out(true, 'OK', d);
     }
     
-    if (a === 'all') { const d = {}; Object.keys(T).forEach(k => d[k] = readPublic(k)); return out(true, 'OK', d); }
     if (T[a]) return out(true, 'OK', readPublic(a));
     return out(false, 'Unknown action');
   } catch (err) { console.error(err); return out(false, 'Unable to process the request: ' + err.message); }
