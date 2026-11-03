@@ -1640,6 +1640,14 @@ details p {
   grid-template-columns: 1fr 1.25fr;
 }
 
+#cf {
+  min-width: 0; /* prevent grid blowout */
+}
+
+.contact-info-card {
+  min-width: 0;
+}
+
 @media (max-width: 860px) {
   .contact-layout {
     grid-template-columns: 1fr;
@@ -2206,6 +2214,19 @@ footer {
   /* Contact layout single column on tablet */
   .contact-layout {
     grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  /* Contact form inputs full width on tablet */
+  #cf input,
+  #cf select,
+  #cf textarea {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .civic-grid {
+    grid-template-columns: 1fr 1fr;
   }
 
   /* Map height reduction on tablet */
@@ -2410,6 +2431,68 @@ footer {
     font-size: 22px;
   }
 
+  /* Contact page — mobile */
+  .contact-layout {
+    gap: 14px;
+  }
+
+  .contact-method {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .contact-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+
+  .contact-method h4 {
+    font-size: 14px;
+  }
+
+  .contact-method p,
+  .contact-method p a {
+    font-size: 13px;
+    word-break: break-word;
+  }
+
+  .civic-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .civic-pill {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .civic-pill b {
+    font-size: 13px;
+  }
+
+  #cf {
+    padding: 18px 16px;
+  }
+
+  #cf label {
+    font-size: 14px;
+  }
+
+  #cf input,
+  #cf select,
+  #cf textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 15px; /* prevents iOS auto-zoom */
+  }
+
+  #cf textarea {
+    rows: 4;
+    min-height: 100px;
+  }
+
   /* Gallery grid */
   .gal-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
@@ -2544,6 +2627,39 @@ footer {
   /* Buttons full width in forms */
   form .btn[type="submit"] {
     width: 100%;
+  }
+
+  /* Contact page — small phones */
+  .contact-method {
+    gap: 8px;
+    padding: 9px;
+  }
+
+  .contact-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+
+  .civic-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .civic-pill {
+    font-size: 11.5px;
+    padding: 7px 6px;
+  }
+
+  #cf {
+    padding: 14px 12px;
+  }
+
+  #cf input,
+  #cf select,
+  #cf textarea {
+    font-size: 16px; /* hard iOS minimum to avoid zoom */
+    padding: 10px 12px;
   }
 
   /* Header brand text */
