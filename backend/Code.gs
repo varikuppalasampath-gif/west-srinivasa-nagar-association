@@ -46,7 +46,19 @@ const INDIVIDUAL_FOLDERS = [
   }
 ];
 
-function syncAllFestivalFolders() {
+/**
+ * 2-WAY MIRROR SYNC WITH GOOGLE DRIVE:
+ * 1. Scans MAIN_FESTIVALS_FOLDER_ID, all subfolders (recursively), INDIVIDUAL_FOLDERS,
+ *    and any standalone colony folders like "Community Meeting".
+ * 2. If a photo was deleted or trashed in Google Drive:
+ *    -> It is AUTOMATICALLY REMOVED from the Google Sheet!
+ * 3. If a new photo or video is uploaded to Google Drive:
+ *    -> It is AUTOMATICALLY ADDED to the Google Sheet!
+ * 4. Strips trailing "Celebrations" from categories so "Community Meeting",
+ *    "Deepavali", "Bathukamma" become clean tabs.
+ * 5. Clears all script caches immediately.
+ */
+function syncAllFestivalFolders(force) {
   const sh = book().getSheetByName(T.gallery);
   if (!sh) {
     Logger.log('ERROR: Sheet "' + T.gallery + '" not found in spreadsheet.');
@@ -59,120 +71,91 @@ function syncAllFestivalFolders() {
   const titleIdx = h.indexOf('title');
   const altIdx = h.indexOf('alt');
 
-  // Load existing URLs and clean up existing categories in the sheet
-  const data = sh.getLastRow() > 1
-    ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length).getValues()
-    : [];
-
-  const existingUrls = [];
-  let cleanedCount = 0;
-  data.forEach((row, idx) => {
-    const u = String(row[urlIdx] || '').trim();
-    if (u) existingUrls.push(u);
-
-    // Automatically strip any trailing " Celebrations" or " Celebration" from existing rows
-    const currentCat = String(row[catIdx] || '').trim();
-    if (currentCat) {
-      const cleanedCat = currentCat.replace(/\s+(Celebrations|Celebration)$/i, '').trim();
-      if (cleanedCat && cleanedCat !== currentCat) {
-        sh.getRange(idx + 2, catIdx + 1).setValue(cleanedCat);
-        row[catIdx] = cleanedCat;
-        cleanedCount++;
-      }
-    }
-  });
-
-  if (cleanedCount > 0) {
-    Logger.log('Cleaned "Celebrations" from ' + cleanedCount + ' existing row(s) in Gallery sheet.');
-  }
-
   const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/mpeg', 'video/3gpp'];
-  const newRows = [];
+
+  // Map of active Drive files found: fileId -> { fileId, title, category, mediaUrl, alt, isVid }
+  const activeDriveFiles = new Map();
+  const scannedFolderIds = new Set();
 
   function processFolder(folder, categoryName, defaultTitle) {
-    Logger.log('Processing folder: "' + folder.getName() + '" as category: [' + categoryName + ']');
-    const files = folder.getFiles();
-    let count = 0;
-
-    while (files.hasNext()) {
-      const file = files.next();
-      const mime = file.getMimeType();
-      const fileName = file.getName();
-      const isImg = IMAGE_TYPES.includes(mime) || /\.(jpe?g|png|webp|gif)$/i.test(fileName);
-      const isVid = VIDEO_TYPES.includes(mime) || mime.startsWith('video/') || /\.(mp4|mov|webm|m4v|3gp|avi|mkv)$/i.test(fileName);
-      
-      if (!isImg && !isVid) {
-        Logger.log('  -> Skipping unsupported file: ' + fileName + ' (' + mime + ')');
-        continue;
-      }
-
-      try {
-        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-      } catch (err) {
-        Logger.log('  -> Note setting permission for ' + fileName + ': ' + err.message);
-      }
-
-      // Videos store their preview URL with #video tag; images use w1400 thumbnail
-      const fileId = file.getId();
-      const mediaUrl = isVid 
-        ? ('https://drive.google.com/file/d/' + fileId + '/preview#video')
-        : ('https://drive.google.com/thumbnail?id=' + fileId + '&sz=w1400');
-
-      // Check if file is already imported by either its ID or URL
-      const alreadyImported = existingUrls.some(u => u.includes(fileId));
-      if (alreadyImported) {
-        Logger.log('  -> Already imported: ' + fileName);
-        continue;
-      }
-
-      Logger.log('  -> Found new ' + (isVid ? 'VIDEO' : 'IMAGE') + ': ' + fileName);
-
-      const rawName = file.getName().replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
-      const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : (defaultTitle + (isVid ? ' Video' : ''));
-
-      const row = {};
-      row['id']        = Utilities.getUuid().slice(0, 8);
-      row['title']     = title;
-      row['category']  = categoryName;
-      row['alt']       = isVid ? (title + ' (Video)') : (title + ' celebration');
-      row['image_url'] = mediaUrl;
-      row['status']    = 'published';
-
-      newRows.push(h.map(c => row[c] != null ? row[c] : ''));
-      existingUrls.push(mediaUrl);
-      count++;
+    if (!folder) return;
+    let folderId = '';
+    try {
+      folderId = folder.getId();
+    } catch (e) {
+      return;
     }
-    Logger.log('  -> Added ' + count + ' new media item(s) from folder: ' + folder.getName());
+    if (scannedFolderIds.has(folderId)) return;
+    scannedFolderIds.add(folderId);
+
+    const cleanCat = String(categoryName || folder.getName()).trim().replace(/\s+(Celebrations|Celebration)$/i, '').trim();
+    Logger.log('Scanning folder: "' + folder.getName() + '" as category: [' + cleanCat + ']');
+
+    try {
+      const files = folder.getFiles();
+      while (files.hasNext()) {
+        const file = files.next();
+        try {
+          if (file.isTrashed()) continue; // Skip files in trash
+        } catch (e) {}
+
+        const mime = file.getMimeType();
+        const fileName = file.getName();
+        const isImg = IMAGE_TYPES.includes(mime) || /\.(jpe?g|png|webp|gif)$/i.test(fileName);
+        const isVid = VIDEO_TYPES.includes(mime) || mime.startsWith('video/') || /\.(mp4|mov|webm|m4v|3gp|avi|mkv)$/i.test(fileName);
+        if (!isImg && !isVid) continue;
+
+        const fileId = file.getId();
+        try {
+          file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        } catch (err) {}
+
+        const mediaUrl = isVid 
+          ? ('https://drive.google.com/file/d/' + fileId + '/preview#video')
+          : ('https://drive.google.com/thumbnail?id=' + fileId + '&sz=w1400');
+
+        const rawName = fileName.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
+        const title = rawName ? (rawName.charAt(0).toUpperCase() + rawName.slice(1)) : (defaultTitle + (isVid ? ' Video' : ''));
+
+        activeDriveFiles.set(fileId, {
+          fileId: fileId,
+          title: title,
+          category: cleanCat,
+          alt: isVid ? (title + ' (Video)') : (title + ' celebration'),
+          mediaUrl: mediaUrl,
+          isVid: isVid
+        });
+      }
+    } catch (err) {
+      Logger.log('Error reading files in folder ' + folder.getName() + ': ' + err.message);
+    }
+
+    // Recursively scan subfolders
+    try {
+      const subfolders = folder.getFolders();
+      while (subfolders.hasNext()) {
+        const sub = subfolders.next();
+        const subName = sub.getName().trim().replace(/\s+(Celebrations|Celebration)$/i, '').trim();
+        processFolder(sub, subName, subName);
+      }
+    } catch (err) {
+      Logger.log('Error reading subfolders in ' + folder.getName() + ': ' + err.message);
+    }
   }
 
-  // 1. Scan Main Festivals parent folder and all its subfolders
+  // 1. Scan Main Festivals parent folder and all its recursive subfolders
   if (MAIN_FESTIVALS_FOLDER_ID && !MAIN_FESTIVALS_FOLDER_ID.startsWith('YOUR_')) {
     try {
       const mainFolder = DriveApp.getFolderById(MAIN_FESTIVALS_FOLDER_ID);
       Logger.log('Found Main Folder: "' + mainFolder.getName() + '"');
-
-      // Check subfolders inside main folder (e.g. Bathukamma, Deepavali, Sankranti)
-      const subfolders = mainFolder.getFolders();
-      let subfolderCount = 0;
-      while (subfolders.hasNext()) {
-        const sub = subfolders.next();
-        subfolderCount++;
-        // Strip any trailing "Celebrations" or "Celebration" if present in the Drive folder name
-        const folderName = sub.getName().trim().replace(/\s+(Celebrations|Celebration)$/i, '').trim();
-        const cat = folderName;
-
-        processFolder(sub, cat, folderName);
-      }
-
-      // Also check files directly in the main folder
       processFolder(mainFolder, 'Festivals', 'Festival');
     } catch (e) {
       Logger.log('Could not scan MAIN_FESTIVALS_FOLDER_ID: ' + e.message);
     }
   }
 
-  // 2. Scan individual folders (like Bathukamma from previous account)
+  // 2. Scan Individual Folders (e.g. Bathukamma)
   INDIVIDUAL_FOLDERS.forEach(cfg => {
     if (!cfg.folderId) return;
     try {
@@ -183,15 +166,96 @@ function syncAllFestivalFolders() {
     }
   });
 
-  if (newRows.length > 0) {
-    sh.getRange(sh.getLastRow() + 1, 1, newRows.length, h.length)
+  // 3. Auto-discover standalone colony folders in Drive (e.g. "Community Meeting", "Community Meetings")
+  const STANDALONE_FOLDER_NAMES = ['Community Meeting', 'Community Meetings', 'Community meeting', 'Meetings', 'Meeting'];
+  STANDALONE_FOLDER_NAMES.forEach(folderName => {
+    try {
+      const folders = DriveApp.getFoldersByName(folderName);
+      while (folders.hasNext()) {
+        const f = folders.next();
+        if (!scannedFolderIds.has(f.getId())) {
+          Logger.log('Auto-discovered colony folder: "' + f.getName() + '"');
+          processFolder(f, 'Community Meeting', 'Community Meeting');
+        }
+      }
+    } catch (e) {
+      Logger.log('Note auto-discovering ' + folderName + ': ' + e.message);
+    }
+  });
+
+  Logger.log('Total active media files in Drive: ' + activeDriveFiles.size);
+
+  // 4. Reconcile with existing rows in Gallery sheet
+  const existingRows = sh.getLastRow() > 1
+    ? sh.getRange(2, 1, sh.getLastRow() - 1, h.length).getValues()
+    : [];
+
+  const keptRows = [];
+  const processedFileIds = new Set();
+  let deletedCount = 0;
+
+  existingRows.forEach(row => {
+    const url = String(row[urlIdx] || '').trim();
+    // Extract Google Drive file ID
+    const match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/) || url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    const driveFileId = match ? match[1] : null;
+
+    if (driveFileId) {
+      // It is a Drive file
+      if (activeDriveFiles.has(driveFileId)) {
+        // Photo still exists in Drive! Keep it and sync clean category
+        const fileInfo = activeDriveFiles.get(driveFileId);
+        row[catIdx] = fileInfo.category; // Ensure clean category without "Celebrations"
+        keptRows.push(row);
+        processedFileIds.add(driveFileId);
+      } else {
+        // Photo was DELETED or moved out of Drive folder! Drop it from sheet!
+        Logger.log('Removed deleted Drive photo from Sheet: ' + (row[titleIdx] || driveFileId));
+        deletedCount++;
+      }
+    } else {
+      // Non-Drive file or manual row -> keep as-is
+      if (url) keptRows.push(row);
+    }
+  });
+
+  // 5. Add brand-new photos from Drive that are not yet in the sheet
+  let addedCount = 0;
+  activeDriveFiles.forEach((info, fileId) => {
+    if (!processedFileIds.has(fileId)) {
+      const rowObj = {};
+      rowObj['id']        = Utilities.getUuid().slice(0, 8);
+      rowObj['title']     = info.title;
+      rowObj['category']  = info.category;
+      rowObj['alt']       = info.alt;
+      rowObj['image_url'] = info.mediaUrl;
+      rowObj['status']    = 'published';
+
+      keptRows.push(h.map(c => rowObj[c] != null ? rowObj[c] : ''));
+      addedCount++;
+    }
+  });
+
+  Logger.log('Reconciliation: Kept ' + keptRows.length + ' rows, Deleted ' + deletedCount + ', Added ' + addedCount);
+
+  // 6. Write back cleanly to sheet in a single atomic batch
+  if (sh.getLastRow() > 1) {
+    sh.getRange(2, 1, sh.getLastRow() - 1, sh.getLastColumn()).clearContent();
+  }
+  if (keptRows.length > 0) {
+    sh.getRange(2, 1, keptRows.length, h.length)
       .setNumberFormat('@')
-      .setValues(newRows);
-    Logger.log('SUCCESS: Inserted ' + newRows.length + ' total new rows into Gallery sheet!');
+      .setValues(keptRows);
   }
 
-  CacheService.getScriptCache().removeAll(Object.keys(T).map(x => 'pub3_' + x));
-  Logger.log('Cache cleared successfully. Done!');
+  // 7. Flush cache
+  try {
+    CacheService.getScriptCache().removeAll(Object.keys(T).map(x => 'pub3_' + x));
+    CacheService.getScriptCache().remove('last_drive_sync');
+  } catch (e) {}
+
+  Logger.log('Sync complete! Cache purged.');
+  return { added: addedCount, deleted: deletedCount, total: keptRows.length };
 }
 
 function importBathukammaImages() {
@@ -310,15 +374,15 @@ function readPublic(key) {
 
 /**
  * Auto-syncs Drive folders in background when needed so user NEVER has to manually run Apps Script.
- * Runs on every request when cache has expired (max once every 5 minutes).
+ * Runs when cache has expired (max once every 3 minutes) or immediately when force=true.
  */
-function maybeAutoSyncDrive() {
+function maybeAutoSyncDrive(force) {
   const cache = CacheService.getScriptCache();
   const lastSync = cache.get('last_drive_sync');
-  if (!lastSync) {
+  if (force || !lastSync) {
     try {
-      syncAllFestivalFolders();
-      cache.put('last_drive_sync', '1', 300); // 5-minute throttle
+      syncAllFestivalFolders(force);
+      cache.put('last_drive_sync', '1', 180); // 3-minute throttle for background requests
     } catch (e) {
       Logger.log('Auto-sync note: ' + e.message);
     }
@@ -328,10 +392,19 @@ function maybeAutoSyncDrive() {
 function doGet(e) {
   try {
     const a = (e && e.parameter && e.parameter.action) || 'all';
+    const force = Boolean(
+      a === 'sync' || 
+      (e && e.parameter && (e.parameter.sync === '1' || e.parameter.refresh === '1' || e.parameter.force === '1'))
+    );
     
-    // Automatically scan Drive whenever gallery or all data is requested!
+    // Scan Drive whenever gallery, all, or sync is requested
     if (a === 'gallery' || a === 'all' || a === 'sync') {
-      maybeAutoSyncDrive();
+      maybeAutoSyncDrive(force);
+    }
+    
+    // Dedicated instant sync endpoint that returns fresh gallery data
+    if (a === 'sync') {
+      return out(true, 'Gallery synced successfully with Google Drive', readPublic('gallery'));
     }
     
     if (a === 'all') { const d = {}; Object.keys(T).forEach(k => d[k] = readPublic(k)); return out(true, 'OK', d); }

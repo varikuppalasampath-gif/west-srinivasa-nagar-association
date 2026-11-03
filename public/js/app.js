@@ -619,9 +619,17 @@ ${sampleBanner()}
     const filtered = pool.filter(g => f === "All" || g.category.toLowerCase() === f.toLowerCase());
 
     return `
-<div class="page-header">
-  <h1>Community Photo Gallery</h1>
-  <p>Memories and moments from our colony festivals, community celebrations, and welfare drives.</p>
+<div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px">
+  <div>
+    <h1>Community Photo Gallery</h1>
+    <p>Memories and moments from our colony festivals, community celebrations, and welfare drives.</p>
+  </div>
+  ${CONFIG.API_URL ? `
+    <button id="btn-sync-gallery" class="btn btn-sm btn-outline" style="display:inline-flex;align-items:center;gap:6px;font-weight:600" type="button" title="Synchronize latest photos and remove deleted ones from Google Drive">
+      <span id="sync-icon" style="display:inline-block">🔄</span>
+      <span id="sync-label">Sync Drive Photos</span>
+    </button>
+  ` : ""}
 </div>
 
 ${sampleBanner()}
@@ -1485,6 +1493,40 @@ function bindCommittee() {
   });
 }
 
+function bindGallery() {
+  const btn = $("#btn-sync-gallery");
+  if (btn && CONFIG.API_URL) {
+    btn.onclick = async () => {
+      const icon = $("#sync-icon");
+      const lbl = $("#sync-label");
+      if (lbl) lbl.textContent = "Syncing with Drive...";
+      if (icon) icon.style.animation = "spin 1s linear infinite";
+      btn.style.opacity = "0.7";
+      btn.disabled = true;
+
+      try {
+        const r = await fetch(CONFIG.API_URL + "?action=sync");
+        const j = await r.json();
+        if (j.success && Array.isArray(j.data)) {
+          DATA.gallery = j.data;
+          toast("Drive synced! " + j.data.length + " media item(s) loaded.");
+          route();
+        } else {
+          toast("Drive sync completed.");
+          route();
+        }
+      } catch (err) {
+        toast("Unable to sync right now. Please refresh the page.");
+      } finally {
+        if (lbl) lbl.textContent = "Sync Drive Photos";
+        if (icon) icon.style.animation = "";
+        btn.style.opacity = "1";
+        btn.disabled = false;
+      }
+    };
+  }
+}
+
 function bindMap() {
   // Initialize Real Leaflet Interactive GPS Map
   initLeafletColonyMap();
@@ -1698,6 +1740,7 @@ function route() {
   $("#menu").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
 
   // View-specific bindings
+  if (v === "gallery") bindGallery();
   if (v === "committee") bindCommittee();
   if (v === "map") bindMap();
   if (v === "contact") bindContact();
