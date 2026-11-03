@@ -5,8 +5,8 @@
 /* ===== ELECTED ASSOCIATION BODY (OFFICIAL 18 MEMBERS) ===== */
 const ELECTED_COMMITTEE_2025 = [
   // 1. President
-  { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "", role_group: "President", public_contact: "president.wsn@gmail.com" },
-  
+  { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "", role_group: "President", public_contact: "" },
+
   // 2. Vice Presidents
   { id: "C2", name: "Kiran Reddy", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
   { id: "C3", name: "Madhu (NFC)", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
@@ -64,7 +64,7 @@ let DATA = {
   committee: [
     // 1. President
     { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "", role_group: "President", public_contact: "president.wsn@gmail.com" },
-    
+
     // 2. Vice Presidents
     { id: "C2", name: "Kiran Reddy", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
     { id: "C3", name: "Madhu (NFC)", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
@@ -94,7 +94,7 @@ let DATA = {
     { id: "C17", name: "Narender", designation: "Adviser", term: "", role_group: "Advisers", public_contact: "" },
     { id: "C18", name: "Vara Prasad", designation: "Adviser", term: "", role_group: "Advisers", public_contact: "" }
   ],
-  houses: (function() {
+  houses: (function () {
     // 4 GPS Boundary corners used for bilinear interpolation of all 40 colony plots
     const c1 = [17.458950, 78.641175]; // Corner 1 (SW)
     const c2 = [17.460953, 78.642231]; // Corner 2 (NW)
@@ -612,7 +612,7 @@ ${sampleBanner()}
       category: String(g.category || "").replace(/\s+(Celebrations|Celebration)$/i, "").trim() || "Festivals"
     }));
     const cats = ["All", ...new Set(pool.map(g => g.category).filter(Boolean))];
-    
+
     // Support category hash format #gallery-CategoryName
     const hashPart = location.hash.includes("-") ? location.hash.substring(location.hash.indexOf("-") + 1) : "All";
     const f = decodeURIComponent(hashPart);
@@ -636,13 +636,13 @@ ${sampleBanner()}
 
 <div class="grid">
   ${filtered.length ? filtered.map(g => {
-    const isVid = (g.image_url && g.image_url.includes("#video")) || (g.alt && g.alt.includes("(Video)"));
-    const vidIdMatch = g.image_url ? g.image_url.match(/\/d\/([^\/]+)/) : null;
-    const thumbSrc = isVid && vidIdMatch 
-      ? `https://drive.google.com/thumbnail?id=${vidIdMatch[1]}&sz=w800`
-      : url(g.image_url);
+      const isVid = (g.image_url && g.image_url.includes("#video")) || (g.alt && g.alt.includes("(Video)"));
+      const vidIdMatch = g.image_url ? g.image_url.match(/\/d\/([^\/]+)/) : null;
+      const thumbSrc = isVid && vidIdMatch
+        ? `https://drive.google.com/thumbnail?id=${vidIdMatch[1]}&sz=w800`
+        : url(g.image_url);
 
-    return g.image_url ? `
+      return g.image_url ? `
     <div class="gal-card ${isVid ? 'gal-video' : ''}" data-lb="${url(g.image_url)}" data-type="${isVid ? 'video' : 'image'}" role="button" tabindex="0" aria-label="Open ${isVid ? 'video' : 'photo'}: ${esc(g.title)}">
       <img src="${thumbSrc}" alt="${esc(g.alt || g.title)}" loading="lazy">
       ${isVid ? `
@@ -665,7 +665,7 @@ ${sampleBanner()}
       </div>
     </div>
   `;
-  }).join("") : `<div class="empty">No photos or videos found in this category yet.</div>`}
+    }).join("") : `<div class="empty">No photos or videos found in this category yet.</div>`}
 </div>`;
   },
 
@@ -679,12 +679,12 @@ ${sampleBanner()}
       : ELECTED_COMMITTEE_2025;
 
     const presidents = committeeList.filter(m => m.designation === "President");
-    const vps        = committeeList.filter(m => m.designation === "Vice President");
-    const genSecs    = committeeList.filter(m => m.designation === "General Secretary");
-    const jointSecs  = committeeList.filter(m => m.designation === "Joint Secretary");
+    const vps = committeeList.filter(m => m.designation === "Vice President");
+    const genSecs = committeeList.filter(m => m.designation === "General Secretary");
+    const jointSecs = committeeList.filter(m => m.designation === "Joint Secretary");
     const treasurers = committeeList.filter(m => m.designation === "Treasurer");
-    const execs      = committeeList.filter(m => m.designation === "Executive Member");
-    const advisers   = committeeList.filter(m => m.designation === "Adviser");
+    const execs = committeeList.filter(m => m.designation === "Executive Member");
+    const advisers = committeeList.filter(m => m.designation === "Adviser");
 
     const pres = presidents[0] || ELECTED_COMMITTEE_2025[0];
 
@@ -860,20 +860,20 @@ ${sampleBanner()}
 
 <div class="grid" id="committee-grid">
   ${committeeList.map(m => {
-    const displayName = cleanName(m.name);
-    const cleanWords = displayName.replace(/[()[\]{}.#]/g, " ").trim().split(/\s+/).filter(Boolean);
-    const initials = (cleanWords.length > 1
-      ? cleanWords[0][0] + cleanWords[1][0]
-      : (cleanWords[0] ? cleanWords[0].slice(0, 2) : "M")
-    ).toUpperCase();
-    let badgeCls = "tag-notice";
-    let group = "Executive Members";
-    if (m.designation.includes("President")) { badgeCls = "tag-urgent"; group = "President & VPs"; }
-    else if (m.designation.includes("Secretary")) { badgeCls = "tag-meeting"; group = "Secretaries"; }
-    else if (m.designation.includes("Treasurer")) { badgeCls = "tag-notice"; group = "Treasurers"; }
-    else if (m.designation.includes("Adviser")) { badgeCls = "tag-notice"; group = "Advisers"; }
+      const displayName = cleanName(m.name);
+      const cleanWords = displayName.replace(/[()[\]{}.#]/g, " ").trim().split(/\s+/).filter(Boolean);
+      const initials = (cleanWords.length > 1
+        ? cleanWords[0][0] + cleanWords[1][0]
+        : (cleanWords[0] ? cleanWords[0].slice(0, 2) : "M")
+      ).toUpperCase();
+      let badgeCls = "tag-notice";
+      let group = "Executive Members";
+      if (m.designation.includes("President")) { badgeCls = "tag-urgent"; group = "President & VPs"; }
+      else if (m.designation.includes("Secretary")) { badgeCls = "tag-meeting"; group = "Secretaries"; }
+      else if (m.designation.includes("Treasurer")) { badgeCls = "tag-notice"; group = "Treasurers"; }
+      else if (m.designation.includes("Adviser")) { badgeCls = "tag-notice"; group = "Advisers"; }
 
-    return `
+      return `
     <div class="card committee-card" data-group="${esc(group)}">
       <div class="avatar-wrap">
         ${m.photo_url
@@ -890,7 +890,7 @@ ${sampleBanner()}
         </div>
       ` : ""}
     </div>`;
-  }).join("")}
+    }).join("")}
 </div>`;
   },
 
@@ -1013,9 +1013,9 @@ ${sampleBanner()}
 
 <div id="bl">
   ${BYLAWS.map((b, i) => {
-    const title = b[0];
-    const points = b[1];
-    return `
+      const title = b[0];
+      const points = b[1];
+      return `
     <details id="b${i + 1}"${n === i + 1 ? " open" : ""}>
       <summary><span style="color:var(--secondary);margin-right:8px;font-weight:800">${i + 1}.</span> ${esc(title)}</summary>
       <div style="padding:12px 16px 8px;display:flex;flex-direction:column;gap:10px">
@@ -1027,7 +1027,7 @@ ${sampleBanner()}
         `).join("")}
       </div>
     </details>`;
-  }).join("")}
+    }).join("")}
 </div>`;
   },
 
@@ -1256,7 +1256,7 @@ function showHouse(i) {
     </div>`;
 }
 
-window.focusHouseOnGpsMap = function(i) {
+window.focusHouseOnGpsMap = function (i) {
   const h = DATA.houses[i];
   if (!h || !h.lat || !h.lng || !window._colonyMap) return;
   const wrap = document.getElementById("map-card-wrapper");
@@ -1800,14 +1800,14 @@ async function init() {
     d.dataset.theme = isCurrentlyDark ? "light" : "dark";
     try {
       localStorage.setItem("wsn-theme", d.dataset.theme);
-    } catch {}
+    } catch { }
     updateThemeIcon();
   };
 
   try {
     const savedTheme = localStorage.getItem("wsn-theme");
     if (savedTheme) document.documentElement.dataset.theme = savedTheme;
-  } catch {}
+  } catch { }
   updateThemeIcon();
 
   // Fetch live Google Apps Script data if API_URL configured
