@@ -392,15 +392,22 @@ function maybeAutoSyncDrive(force) {
 function doGet(e) {
   try {
     const a = (e && e.parameter && e.parameter.action) || 'all';
+    const isSync = Boolean(
+      a === 'gallery' ||
+      a === 'sync' ||
+      (e && e.parameter && (e.parameter.sync === '1' || e.parameter.refresh === '1' || e.parameter.force === '1'))
+    );
     
-    // Whenever gallery or sync is requested, always perform an immediate live sync with Google Drive
-    if (a === 'gallery' || a === 'sync') {
-      maybeAutoSyncDrive(true); // Force live scan: removes deleted Drive photos & adds new Drive photos
-      return out(true, 'OK', readPublic('gallery'));
+    // When gallery is requested, or when page refresh / sync=1 is sent:
+    // ALWAYS hit Google Drive live, remove deleted photos, add new photos, and clear cache!
+    if (isSync) {
+      syncAllFestivalFolders(true);
+      if (a === 'gallery' || a === 'sync') {
+        return out(true, 'OK', readPublic('gallery'));
+      }
     }
     
     if (a === 'all') {
-      maybeAutoSyncDrive(false);
       const d = {};
       Object.keys(T).forEach(k => d[k] = readPublic(k));
       return out(true, 'OK', d);

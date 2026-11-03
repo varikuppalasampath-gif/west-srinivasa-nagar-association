@@ -1486,24 +1486,18 @@ function bindCommittee() {
 }
 
 let _gallerySyncActive = false;
-let _lastGallerySync = 0;
 
 async function bindGallery() {
-  if (!CONFIG.API_URL) return;
-
-  // Auto-fetch Drive folders & photos whenever gallery is opened (throttle 10s between rapid clicks)
-  const now = Date.now();
-  if (_gallerySyncActive || (now - _lastGallerySync < 10000)) return;
+  if (!CONFIG.API_URL || _gallerySyncActive) return;
 
   _gallerySyncActive = true;
   try {
-    const r = await fetch(CONFIG.API_URL + "?action=gallery&sync=1&t=" + now);
+    const r = await fetch(CONFIG.API_URL + "?action=gallery&sync=1&t=" + Date.now());
     const j = await r.json();
     if (j.success && Array.isArray(j.data)) {
       const prevIds = (DATA.gallery || []).map(g => g.id).join(",");
       const newIds = j.data.map(g => g.id).join(",");
       DATA.gallery = j.data;
-      _lastGallerySync = Date.now();
 
       // If photos were added or deleted in Drive, automatically re-render the gallery view
       if (prevIds !== newIds && location.hash.startsWith("#gallery")) {
@@ -1823,7 +1817,9 @@ async function init() {
       <div class="page-header"><div class="sk" style="height:36px;width:300px;margin-bottom:12px"></div><div class="sk" style="height:18px;width:500px"></div></div>
       <div class="grid"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>`;
     try {
-      const r = await fetch(CONFIG.API_URL + "?action=all");
+      const isGallery = location.hash.startsWith("#gallery");
+      const fetchUrl = CONFIG.API_URL + "?action=all" + (isGallery ? "&sync=1" : "") + "&t=" + Date.now();
+      const r = await fetch(fetchUrl);
       const j = await r.json();
       if (j.success) {
         // If live sheet committee data is empty, sample, or incomplete, retain official ELECTED_COMMITTEE_2025
