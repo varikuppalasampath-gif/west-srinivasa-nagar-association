@@ -311,30 +311,30 @@ function seedElectedCommittee() {
   
   const officialMembers = [
     // 1. President
-    ['C1', 'Srikanth Bezawada', 'President', '2025–2027', 'president.wsn@gmail.com', '', 'published'],
+    ['C1', 'Srikanth Bezawada', 'President', '', 'president.wsn@gmail.com', '', 'published'],
     // 2. Vice Presidents
-    ['C2', 'Kiran Reddy', 'Vice President', '2025–2027', '', '', 'published'],
-    ['C3', 'Madhu (NFC)', 'Vice President', '2025–2027', '', '', 'published'],
-    ['C4', 'Venkateswarlu Kakarla', 'Vice President', '2025–2027', '', '', 'published'],
+    ['C2', 'Kiran Reddy', 'Vice President', '', '', '', 'published'],
+    ['C3', 'Madhu (NFC)', 'Vice President', '', '', '', 'published'],
+    ['C4', 'Venkateswarlu Kakarla', 'Vice President', '', '', '', 'published'],
     // 3. General Secretaries
-    ['C5', 'Shivakumar Sandesari', 'General Secretary', '2025–2027', 'sec.wsn@gmail.com', '', 'published'],
-    ['C6', 'Santosh (NFC)', 'General Secretary', '2025–2027', '', '', 'published'],
+    ['C5', 'Shivakumar Sandesari', 'General Secretary', '', 'sec.wsn@gmail.com', '', 'published'],
+    ['C6', 'Santosh (NFC)', 'General Secretary', '', '', '', 'published'],
     // 4. Joint Secretary
-    ['C7', 'Linga Naik Banoth', 'Joint Secretary', '2025–2027', '', '', 'published'],
+    ['C7', 'Linga Naik Banoth', 'Joint Secretary', '', '', '', 'published'],
     // 5. Treasurers
-    ['C8', 'Srinivasa Rao Janga', 'Treasurer', '2025–2027', '', '', 'published'],
-    ['C9', 'Ramesh', 'Treasurer', '2025–2027', '', '', 'published'],
+    ['C8', 'Srinivasa Rao Janga', 'Treasurer', '', '', '', 'published'],
+    ['C9', 'Ramesh', 'Treasurer', '', '', '', 'published'],
     // 6. Executive Members
-    ['C10', 'Balaraju', 'Executive Member', '2025–2027', '', '', 'published'],
-    ['C11', 'Shiva (Plot No. 263)', 'Executive Member', '2025–2027', '', '', 'published'],
-    ['C12', 'Somanna', 'Executive Member', '2025–2027', '', '', 'published'],
-    ['C13', 'Srinivasulu', 'Executive Member', '2025–2027', '', '', 'published'],
-    ['C14', 'Sathish', 'Executive Member', '2025–2027', '', '', 'published'],
-    ['C15', 'Srinivasulu Janga (Army)', 'Executive Member', '2025–2027', '', '', 'published'],
+    ['C10', 'Balaraju', 'Executive Member', '', '', '', 'published'],
+    ['C11', 'Shiva (Plot No. 263)', 'Executive Member', '', '', '', 'published'],
+    ['C12', 'Somanna', 'Executive Member', '', '', '', 'published'],
+    ['C13', 'Srinivasulu', 'Executive Member', '', '', '', 'published'],
+    ['C14', 'Sathish', 'Executive Member', '', '', '', 'published'],
+    ['C15', 'Srinivasulu Janga (Army)', 'Executive Member', '', '', '', 'published'],
     // 7. Advisers
-    ['C16', 'Satya Kishor', 'Adviser', '2025–2027', '', '', 'published'],
-    ['C17', 'Narender', 'Adviser', '2025–2027', '', '', 'published'],
-    ['C18', 'Vara Prasad', 'Adviser', '2025–2027', '', '', 'published']
+    ['C16', 'Satya Kishor', 'Adviser', '', '', '', 'published'],
+    ['C17', 'Narender', 'Adviser', '', '', '', 'published'],
+    ['C18', 'Vara Prasad', 'Adviser', '', '', '', 'published']
   ];
 
   // Reset sheet with headers and official rows

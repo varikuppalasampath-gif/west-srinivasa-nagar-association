@@ -2,39 +2,39 @@
    West Srinivasa Nagar Association - Frontend Application
    ========================================================================== */
 
-/* ===== ELECTED ASSOCIATION BODY 2025–2027 (OFFICIAL 18 MEMBERS) ===== */
+/* ===== ELECTED ASSOCIATION BODY (OFFICIAL 18 MEMBERS) ===== */
 const ELECTED_COMMITTEE_2025 = [
   // 1. President
-  { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "2025–2027", role_group: "President", public_contact: "president.wsn@gmail.com" },
+  { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "", role_group: "President", public_contact: "president.wsn@gmail.com" },
   
   // 2. Vice Presidents
-  { id: "C2", name: "Kiran Reddy", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
-  { id: "C3", name: "Madhu (NFC)", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
-  { id: "C4", name: "Venkateswarlu Kakarla", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
+  { id: "C2", name: "Kiran Reddy", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
+  { id: "C3", name: "Madhu (NFC)", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
+  { id: "C4", name: "Venkateswarlu Kakarla", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
 
   // 3. General Secretaries
-  { id: "C5", name: "Shivakumar Sandesari", designation: "General Secretary", term: "2025–2027", role_group: "General Secretaries", public_contact: "sec.wsn@gmail.com" },
-  { id: "C6", name: "Santosh (NFC)", designation: "General Secretary", term: "2025–2027", role_group: "General Secretaries", public_contact: "" },
+  { id: "C5", name: "Shivakumar Sandesari", designation: "General Secretary", term: "", role_group: "General Secretaries", public_contact: "sec.wsn@gmail.com" },
+  { id: "C6", name: "Santosh (NFC)", designation: "General Secretary", term: "", role_group: "General Secretaries", public_contact: "" },
 
   // 4. Joint Secretary
-  { id: "C7", name: "Linga Naik Banoth", designation: "Joint Secretary", term: "2025–2027", role_group: "Joint Secretary", public_contact: "" },
+  { id: "C7", name: "Linga Naik Banoth", designation: "Joint Secretary", term: "", role_group: "Joint Secretary", public_contact: "" },
 
   // 5. Treasurers
-  { id: "C8", name: "Srinivasa Rao Janga", designation: "Treasurer", term: "2025–2027", role_group: "Treasurers", public_contact: "" },
-  { id: "C9", name: "Ramesh", designation: "Treasurer", term: "2025–2027", role_group: "Treasurers", public_contact: "" },
+  { id: "C8", name: "Srinivasa Rao Janga", designation: "Treasurer", term: "", role_group: "Treasurers", public_contact: "" },
+  { id: "C9", name: "Ramesh", designation: "Treasurer", term: "", role_group: "Treasurers", public_contact: "" },
 
   // 6. Executive Members
-  { id: "C10", name: "Balaraju", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-  { id: "C11", name: "Shiva (Plot No. 263)", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-  { id: "C12", name: "Somanna", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-  { id: "C13", name: "Srinivasulu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-  { id: "C14", name: "Sathish", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-  { id: "C15", name: "Srinivasulu Janga (Army)", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+  { id: "C10", name: "Balaraju", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+  { id: "C11", name: "Shiva (Plot No. 263)", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+  { id: "C12", name: "Somanna", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+  { id: "C13", name: "Srinivasulu", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+  { id: "C14", name: "Sathish", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+  { id: "C15", name: "Srinivasulu Janga (Army)", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
 
   // 7. Advisers
-  { id: "C16", name: "Satya Kishor", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" },
-  { id: "C17", name: "Narender", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" },
-  { id: "C18", name: "Vara Prasad", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" }
+  { id: "C16", name: "Satya Kishor", designation: "Adviser", term: "", role_group: "Advisers", public_contact: "" },
+  { id: "C17", name: "Narender", designation: "Adviser", term: "", role_group: "Advisers", public_contact: "" },
+  { id: "C18", name: "Vara Prasad", designation: "Adviser", term: "", role_group: "Advisers", public_contact: "" }
 ];
 
 /* ===== SAMPLE DATA (fictional; replaced automatically when API_URL is set) ===== */
@@ -63,36 +63,36 @@ let DATA = {
   ],
   committee: [
     // 1. President
-    { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "2025–2027", role_group: "President", public_contact: "president.wsn@gmail.com" },
+    { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "", role_group: "President", public_contact: "president.wsn@gmail.com" },
     
     // 2. Vice Presidents
-    { id: "C2", name: "Kiran Reddy", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
-    { id: "C3", name: "Madhu (NFC)", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
-    { id: "C4", name: "Venkateswarlu Kakarla", designation: "Vice President", term: "2025–2027", role_group: "Vice Presidents", public_contact: "" },
+    { id: "C2", name: "Kiran Reddy", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
+    { id: "C3", name: "Madhu (NFC)", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
+    { id: "C4", name: "Venkateswarlu Kakarla", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
 
     // 3. General Secretaries
-    { id: "C5", name: "Shivakumar Sandesari", designation: "General Secretary", term: "2025–2027", role_group: "General Secretaries", public_contact: "sec.wsn@gmail.com" },
-    { id: "C6", name: "Santosh (NFC)", designation: "General Secretary", term: "2025–2027", role_group: "General Secretaries", public_contact: "" },
+    { id: "C5", name: "Shivakumar Sandesari", designation: "General Secretary", term: "", role_group: "General Secretaries", public_contact: "sec.wsn@gmail.com" },
+    { id: "C6", name: "Santosh (NFC)", designation: "General Secretary", term: "", role_group: "General Secretaries", public_contact: "" },
 
     // 4. Joint Secretary
-    { id: "C7", name: "Linga Naik Banoth", designation: "Joint Secretary", term: "2025–2027", role_group: "Joint Secretary", public_contact: "" },
+    { id: "C7", name: "Linga Naik Banoth", designation: "Joint Secretary", term: "", role_group: "Joint Secretary", public_contact: "" },
 
     // 5. Treasurers
-    { id: "C8", name: "Srinivasa Rao Janga", designation: "Treasurer", term: "2025–2027", role_group: "Treasurers", public_contact: "" },
-    { id: "C9", name: "Ramesh", designation: "Treasurer", term: "2025–2027", role_group: "Treasurers", public_contact: "" },
+    { id: "C8", name: "Srinivasa Rao Janga", designation: "Treasurer", term: "", role_group: "Treasurers", public_contact: "" },
+    { id: "C9", name: "Ramesh", designation: "Treasurer", term: "", role_group: "Treasurers", public_contact: "" },
 
     // 6. Executive Members
-    { id: "C10", name: "Balaraju", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-    { id: "C11", name: "Shiva (Plot No. 263)", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-    { id: "C12", name: "Somanna", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-    { id: "C13", name: "Srinivasulu", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-    { id: "C14", name: "Sathish", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
-    { id: "C15", name: "Srinivasulu Janga (Army)", designation: "Executive Member", term: "2025–2027", role_group: "Executive Members", public_contact: "" },
+    { id: "C10", name: "Balaraju", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+    { id: "C11", name: "Shiva (Plot No. 263)", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+    { id: "C12", name: "Somanna", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+    { id: "C13", name: "Srinivasulu", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+    { id: "C14", name: "Sathish", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
+    { id: "C15", name: "Srinivasulu Janga (Army)", designation: "Executive Member", term: "", role_group: "Executive Members", public_contact: "" },
 
     // 7. Advisers
-    { id: "C16", name: "Satya Kishor", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" },
-    { id: "C17", name: "Narender", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" },
-    { id: "C18", name: "Vara Prasad", designation: "Adviser", term: "2025–2027", role_group: "Advisers", public_contact: "" }
+    { id: "C16", name: "Satya Kishor", designation: "Adviser", term: "", role_group: "Advisers", public_contact: "" },
+    { id: "C17", name: "Narender", designation: "Adviser", term: "", role_group: "Advisers", public_contact: "" },
+    { id: "C18", name: "Vara Prasad", designation: "Adviser", term: "", role_group: "Advisers", public_contact: "" }
   ],
   houses: (function() {
     // 4 GPS Boundary corners used for bilinear interpolation of all 40 colony plots
@@ -698,7 +698,7 @@ ${sampleBanner()}
 
 <!-- ===== OFFICIAL 7-BLOCK HIERARCHY CHART ===== -->
 <div class="org-chart-section">
-  <h2 class="org-chart-title">Association Body Hierarchy 2025–2027</h2>
+  <h2 class="org-chart-title">Association Body Hierarchy</h2>
   <p class="org-chart-subtitle">Official 7-tier organizational structure of the elected representatives</p>
 
   <div class="org-hierarchy-container">
@@ -882,7 +882,6 @@ ${sampleBanner()}
       </div>
       <h3 class="committee-name" style="font-size:16px">${esc(displayName)}</h3>
       <span class="tag ${badgeCls}" style="margin-bottom:6px">${esc(m.designation)}</span>
-      <p class="committee-term" style="margin:0;font-size:13px">Tenure: ${esc(m.term || "2025–2027")}</p>
       ${m.public_contact ? `
         <div style="margin-top:10px">
           <a class="btn btn-sm btn-outline" href="mailto:${esc(m.public_contact)}">
