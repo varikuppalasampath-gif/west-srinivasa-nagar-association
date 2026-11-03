@@ -5,7 +5,7 @@
 /* ===== ELECTED ASSOCIATION BODY (OFFICIAL 18 MEMBERS) ===== */
 const ELECTED_COMMITTEE_2025 = [
   // 1. President
-  { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "", role_group: "President", public_contact: "" },
+  { id: "C1", name: "Srikanth Bezawada", designation: "President", term: "", role_group: "President", public_contact: "president.wsn@gmail.com" },
 
   // 2. Vice Presidents
   { id: "C2", name: "Kiran Reddy", designation: "Vice President", term: "", role_group: "Vice Presidents", public_contact: "" },
