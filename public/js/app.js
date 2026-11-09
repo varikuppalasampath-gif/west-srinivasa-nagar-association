@@ -1610,13 +1610,15 @@ function bindContact() {
         body: JSON.stringify({ action: "contact", ...v })
       });
       const j = await x.json();
-      if (!j.success) throw 0;
+      if (!j.success) {
+        throw new Error(j.message || "Unable to deliver enquiry. Please verify network or reach us directly via email.");
+      }
       r.className = "ok";
       r.textContent = "✓ Thank you! Your enquiry has been sent to the association email. The committee will review it shortly.";
       cf.reset();
-    } catch {
+    } catch (err) {
       r.className = "err";
-      r.textContent = "Unable to deliver enquiry. Please verify network or reach us directly via email.";
+      r.textContent = (err && err.message) ? err.message : "Unable to deliver enquiry. Please verify network or reach us directly via email.";
     } finally {
       busy = false;
       sb.disabled = false;

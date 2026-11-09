@@ -506,6 +506,19 @@ function admin(b) {
 // Association inbox — all contact form submissions land here
 const ASSOCIATION_EMAIL = 'westsrinivasanagarassociation@gmail.com';
 
+/**
+ * Run this function in the Apps Script editor (click "Run") once to authorize
+ * the MailApp permission and test that email sending is working.
+ */
+function authorizeAndTestEmail() {
+  MailApp.sendEmail({
+    to: ASSOCIATION_EMAIL,
+    subject: '[WSN Portal] Authorization Test Email',
+    body: 'Email sending is successfully authorized and working for the WSN Association portal!'
+  });
+  Logger.log('Success! Test email sent to ' + ASSOCIATION_EMAIL);
+}
+
 function doPost(e) {
   try {
     const b = JSON.parse(e.postData.contents);
@@ -519,12 +532,11 @@ function doPost(e) {
           cat   = ['General','Maintenance','Event','Feedback'].includes(b.category) ? b.category : 'General';
 
     if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || msg.length < 10)
-      return out(false, 'Invalid input');
+      return out(false, 'Invalid input. Please check the name, email, and message length.');
 
-    // Rate-limit: one submission per email per 60 seconds
+    // Rate-limit: avoid rapid duplicate spam (10 seconds)
     const cache = CacheService.getScriptCache(), rk = 'rl_' + email.toLowerCase();
-    if (cache.get(rk)) return out(false, 'Please wait before sending another enquiry');
-    cache.put(rk, '1', 60);
+    if (cache.get(rk)) return out(false, 'Please wait a moment before sending another enquiry.');
 
     // ── Send email directly to association inbox ──────────────────────────────
     const subject  = '[WSN Website] New ' + cat + ' Enquiry from ' + name;
@@ -558,11 +570,14 @@ function doPost(e) {
       body:     plainBody,
       htmlBody: htmlBody
     });
+
+    cache.put(rk, '1', 10);
     // ─────────────────────────────────────────────────────────────────────────
 
     return out(true, 'Received');
   } catch (err) {
     console.error(err);
-    return out(false, err.message && err.message[0] === '!' ? err.message.slice(1) : 'Unable to process the request');
+    const msg = (err && err.message) ? String(err.message).replace(/^!/, '') : 'Unable to process the request';
+    return out(false, msg);
   }
 }
