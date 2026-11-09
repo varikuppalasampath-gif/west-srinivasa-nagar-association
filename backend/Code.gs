@@ -503,6 +503,9 @@ function admin(b) {
   } finally { lock.releaseLock(); }
 }
 
+// Association inbox — all contact form submissions are forwarded here
+const ASSOCIATION_EMAIL = 'westsrinivasanagarassociation@gmail.com';
+
 function doPost(e) {
   try {
     const b = JSON.parse(e.postData.contents);
@@ -518,6 +521,49 @@ function doPost(e) {
     try { book().getSheetByName('ContactSubmissions').appendRow([Utilities.getUuid(), name, email, phone, cat, msg, new Date().toISOString(), 'new']); }
     finally { lock.releaseLock(); }
     cache.put(rk, '1', 60);
+
+    // ── Send email notification to association inbox ──────────────────────────
+    try {
+      const subject = '[WSN Website] New ' + cat + ' Enquiry from ' + name;
+      const body =
+        'A new resident enquiry has been submitted via the WSN Association website portal.\n\n' +
+        '──────────────────────────────────────\n' +
+        'Name     : ' + name + '\n' +
+        'Email    : ' + email + '\n' +
+        'Phone    : ' + (phone || 'Not provided') + '\n' +
+        'Category : ' + cat + '\n' +
+        '──────────────────────────────────────\n\n' +
+        'Message:\n' + msg + '\n\n' +
+        '──────────────────────────────────────\n' +
+        'Reply directly to this email to respond to the resident.\n' +
+        'All submissions are also saved in the ContactSubmissions sheet.\n';
+
+      const htmlBody =
+        '<div style="font-family:Arial,sans-serif;max-width:600px;padding:20px;border:1px solid #e2e8f0;border-radius:8px">' +
+        '<h2 style="color:#0f3d68;margin-top:0">New ' + cat + ' Enquiry — WSN Portal</h2>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:14px">' +
+        '<tr><td style="padding:8px 12px;background:#f1f5f9;font-weight:600;width:100px">Name</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0">' + name + '</td></tr>' +
+        '<tr><td style="padding:8px 12px;background:#f1f5f9;font-weight:600">Email</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0"><a href="mailto:' + email + '">' + email + '</a></td></tr>' +
+        '<tr><td style="padding:8px 12px;background:#f1f5f9;font-weight:600">Phone</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0">' + (phone || 'Not provided') + '</td></tr>' +
+        '<tr><td style="padding:8px 12px;background:#f1f5f9;font-weight:600">Category</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0">' + cat + '</td></tr>' +
+        '</table>' +
+        '<div style="margin-top:16px;padding:14px;background:#f8fafc;border-left:4px solid #0d9488;border-radius:4px;font-size:14px;white-space:pre-wrap">' + msg + '</div>' +
+        '<p style="font-size:12px;color:#64748b;margin-top:20px">This message was submitted via the West Srinivasa Nagar Association resident portal. Reply to this email to respond directly to the resident.</p>' +
+        '</div>';
+
+      MailApp.sendEmail({
+        to: ASSOCIATION_EMAIL,
+        replyTo: email,
+        subject: subject,
+        body: body,
+        htmlBody: htmlBody
+      });
+    } catch (mailErr) {
+      // Log but don't fail the request — submission is already saved to sheet
+      console.error('Email notification failed: ' + mailErr.message);
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     return out(true, 'Received');
   } catch (err) {
     console.error(err);
