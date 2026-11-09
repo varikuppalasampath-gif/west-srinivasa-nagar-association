@@ -181,6 +181,9 @@ const today = () => new Date().toISOString().slice(0, 10);
 const live = a => (a || []).filter(x => !x.expires_at || x.expires_at >= today());
 const url = u => /^https:\/\//.test(u || "") ? esc(u) : "";
 const cleanEmail = e => e ? (e.includes("@") ? e : e + "@gmail.com") : "";
+// gmailLink: returns a Gmail compose URL so clicking always opens Gmail
+// (works on desktop browser tab + triggers Gmail app on mobile)
+const gmailLink = e => `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(cleanEmail(e))}`;
 
 // SVG Icon set
 const icons = {
@@ -714,7 +717,7 @@ ${sampleBanner()}
             <span class="org-m-dot org-dot-president"></span>
             <span>${esc(cleanName(pres.name))}</span>
           </div>
-          ${pres.public_contact ? `<a class="org-email" style="color:var(--primary);text-decoration:underline;font-size:12px" href="mailto:${esc(pres.public_contact)}">${esc(pres.public_contact)}</a>` : ""}
+          ${pres.public_contact ? `<a class="org-email" style="color:var(--primary);text-decoration:underline;font-size:12px" href="${gmailLink(pres.public_contact)}" target="_blank" rel="noopener noreferrer">${esc(pres.public_contact)}</a>` : ""}
         </div>
       </div>
     </div>
@@ -884,7 +887,7 @@ ${sampleBanner()}
       <span class="tag ${badgeCls}" style="margin-bottom:6px">${esc(m.designation)}</span>
       ${m.public_contact ? `
         <div style="margin-top:10px">
-          <a class="btn btn-sm btn-outline" href="mailto:${esc(m.public_contact)}">
+          <a class="btn btn-sm btn-outline" href="${gmailLink(m.public_contact)}" target="_blank" rel="noopener noreferrer">
             Email Officer
           </a>
         </div>
@@ -1055,7 +1058,7 @@ ${sampleBanner()}
         <div class="contact-icon">${icons.home}</div>
         <div>
           <h4>Official Email</h4>
-          <p><a href="mailto:${esc(cleanEmail(CONFIG.EMAIL))}">${esc(cleanEmail(CONFIG.EMAIL))}</a></p>
+          <p><a href="${gmailLink(CONFIG.EMAIL)}" target="_blank" rel="noopener noreferrer">${esc(cleanEmail(CONFIG.EMAIL))}</a></p>
         </div>
       </div>
 
@@ -1752,7 +1755,7 @@ async function init() {
 
   if (CONFIG.EMAIL) {
     const pubMail = cleanEmail(CONFIG.EMAIL);
-    $("#fcontact").innerHTML = `<a href="mailto:${esc(pubMail)}">${esc(pubMail)}</a>`;
+    $("#fcontact").innerHTML = `<a href="${gmailLink(pubMail)}" target="_blank" rel="noopener noreferrer">${esc(pubMail)}</a>`;
   }
   if (CONFIG.ADDRESS) {
     const faddr = $("#faddress");
