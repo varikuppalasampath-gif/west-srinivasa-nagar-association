@@ -1085,7 +1085,7 @@ ${sampleBanner()}
 
   <form class="card" id="cf" novalidate>
     <h3>Submit Resident Enquiry / Request</h3>
-    <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">Submissions are delivered directly to the Executive Committee register.</p>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">Submissions are delivered directly to the Executive Committee email inbox.</p>
 
     <label for="n">Your Full Name *</label>
     <input id="n" maxlength="80" placeholder="e.g. S. Sharma" autocomplete="name" required>
@@ -1612,7 +1612,7 @@ function bindContact() {
       const j = await x.json();
       if (!j.success) throw 0;
       r.className = "ok";
-      r.textContent = "✓ Thank you! Your enquiry has been recorded. The committee will review it shortly.";
+      r.textContent = "✓ Thank you! Your enquiry has been sent to the association email. The committee will review it shortly.";
       cf.reset();
     } catch {
       r.className = "err";
